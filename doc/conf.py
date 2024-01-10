@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ravencoin documentation build configuration file, created by
+# evrmore documentation build configuration file, created by
 # sphinx-quickstart on Thu May 28 20:40:55 2015.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -11,9 +11,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-PROJECT = 'python-ravencoinlib'
+PROJECT = 'python-evrmoreb'
 DESCRIPTION = 'The Swiss Army Knife of the Ravencoin protocol.'
-AUTHORS = 'The python-ravencoinlib developers'
+AUTHORS = 'The python-evrmoreb developers'
 
 import sphinx
 import sys

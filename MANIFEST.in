@@ -1,2 +1,2 @@
 include LICENSE README.md
-graft ravencoin/tests/data/
+graft evrmore/tests/data/

@@ -1,11 +1,11 @@
-# python-ravencoinlib
+# python-evrmorelib
 
-Ravencoin fork of python-bitcoinlib intended to provide access to Ravencoin data 
+Evrmore fork of python-bitcoinlib intended to provide access to Evrmore data 
 structures and protocol. WIP - Test before use
 
-The RPC interface, ravencoin.rpc, is designed to work with Ravencoin Core v3.3.0+.
+The RPC interface, evrmore.rpc, is designed to work with Evrmore Core v3.3.0+.
 
-"The only Python library for Ravencoin I've ever used" - Warren Buffett
+"The only Python library for Evrmore I've ever used" - Warren Buffett
 
 ## Requirements
 
@@ -19,29 +19,29 @@ The RPC interface, ravencoin.rpc, is designed to work with Ravencoin Core v3.3.0
 
 ## Structure
 
-Everything consensus critical is found in the modules under ravencoin.core. This
+Everything consensus critical is found in the modules under evrmore.core. This
 rule is followed pretty strictly, for instance chain parameters are split into
 consensus critical and non-consensus-critical.
 
-    ravencoin.core            - Basic core definitions, datastructures, and
+    evrmore.core            - Basic core definitions, datastructures, and
                               (context-independent) validation
-    ravencoin.core.assets     - OP_RVN_ASSET data structures
-    ravencoin.core.key        - ECC pubkeys
-    ravencoin.core.script     - Scripts and opcodes
-    ravencoin.core.scripteval - Script evaluation/verification
-    ravencoin.core.serialize  - Serialization
+    evrmore.core.assets     - OP_RVN_ASSET data structures
+    evrmore.core.key        - ECC pubkeys
+    evrmore.core.script     - Scripts and opcodes
+    evrmore.core.scripteval - Script evaluation/verification
+    evrmore.core.serialize  - Serialization
 
-In the future the ravencoin.core may use the Satoshi sourcecode directly as a
+In the future the evrmore.core may use the Satoshi sourcecode directly as a
 library. Non-consensus critical modules include the following:
 
-    ravencoin          - Chain selection
-    ravencoin.assets   - Asset name and metadata related code
-    ravencoin.base58   - Base58 encoding
-    ravencoin.bloom    - Bloom filters (incomplete)
-    ravencoin.net      - Network communication (in flux)
-    ravencoin.messages - Network messages (in flux)
-    ravencoin.rpc      - Ravencoin Core RPC interface support
-    ravencoin.wallet   - Wallet-related code, currently Ravencoin address and
+    evrmore          - Chain selection
+    evrmore.assets   - Asset name and metadata related code
+    evrmore.base58   - Base58 encoding
+    evrmore.bloom    - Bloom filters (incomplete)
+    evrmore.net      - Network communication (in flux)
+    evrmore.messages - Network messages (in flux)
+    evrmore.rpc      - Evrmore Core RPC interface support
+    evrmore.wallet   - Wallet-related code, currently Evrmore address and
                        private key support
 
 Effort has been made to follow the Satoshi source relatively closely, for
@@ -52,17 +52,17 @@ CBlockHeader, nValue etc. Otherwise Python naming conventions are followed.
 
 ## Mutable vs. Immutable objects
 
-Like the Ravencoin Core codebase CTransaction is immutable and
-CMutableTransaction is mutable; unlike the Ravencoin Core codebase this
+Like the Evrmore Core codebase CTransaction is immutable and
+CMutableTransaction is mutable; unlike the Evrmore Core codebase this
 distinction also applies to COutPoint, CTxIn, CTxOut, and CBlock.
 
 
 ## Endianness Gotchas
 
-Rather confusingly Ravencoin Core shows transaction and block hashes as
+Rather confusingly Evrmore Core shows transaction and block hashes as
 little-endian hex rather than the big-endian the rest of the world uses for
-SHA256. python-ravencoinlib provides the convenience functions x() and lx() in
-ravencoin.core to convert from big-endian and little-endian hex to raw bytes to
+SHA256. python-evrmorelib provides the convenience functions x() and lx() in
+evrmore.core to convert from big-endian and little-endian hex to raw bytes to
 accomodate this. In addition see b2x() and b2lx() for conversion from bytes to
 big/little-endian hex.
 
@@ -87,8 +87,8 @@ spending a pay-to-script-hash transaction output:
 
 Do the following:
 
-    import ravencoin
-    ravencoin.SelectParams(NAME)
+    import evrmore
+    evrmore.SelectParams(NAME)
 
 Where NAME is one of 'testnet', 'mainnet', or 'regtest'. The chain currently
 selected is a global variable that changes behavior everywhere, just like in
@@ -97,7 +97,7 @@ the Satoshi codebase.
 
 ## Unit tests
 
-Under ravencoin/tests using test data from Ravencoin Core. To run them:
+Under evrmore/tests using test data from Evrmore Core. To run them:
 
     python3 -m unittest discover
 

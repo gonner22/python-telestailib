@@ -18,8 +18,8 @@ if sys.version_info.major < 3:
     sys.stderr.write('Sorry, Python 3.x required by this example.\n')
     sys.exit(1)
 
-import ravencoin
-import ravencoin.rpc
+import evrmore
+import evrmore.rpc
 
 import struct
 import sys
@@ -32,13 +32,14 @@ try:
     n = int(sys.argv[1])
 
     if len(sys.argv) == 3:
-        ravencoin.SelectParams(sys.argv[2])
+        evrmore.SelectParams(sys.argv[2])
 except Exception as ex:
-    print('Usage: %s <block-height> [network=(mainnet|testnet|regtest)] > bootstrap.dat' % sys.argv[0], file=sys.stderr)
+    print('Usage: %s <block-height> [network=(mainnet|testnet|regtest)] > bootstrap.dat' %
+          sys.argv[0], file=sys.stderr)
     sys.exit(1)
 
 
-proxy = ravencoin.rpc.Proxy()
+proxy = evrmore.rpc.Proxy()
 
 total_bytes = 0
 start_time = time.time()
@@ -51,10 +52,10 @@ for i in range(n + 1):
 
     total_bytes += len(block_bytes)
     print('%.2f KB/s, height %d, %d bytes' %
-            ((total_bytes / 1000) / (time.time() - start_time),
-             i, len(block_bytes)),
+          ((total_bytes / 1000) / (time.time() - start_time),
+           i, len(block_bytes)),
           file=sys.stderr)
 
-    fd.write(ravencoin.params.MESSAGE_START)
+    fd.write(evrmore.params.MESSAGE_START)
     fd.write(struct.pack('<i', len(block_bytes)))
     fd.write(block_bytes)

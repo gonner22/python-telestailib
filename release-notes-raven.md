@@ -1,4 +1,4 @@
-# python-ravencoinlib release notes
+# python-evrmorelib release notes
 
 ## v0.2.3 - Jun 2020
 * Kawpow algo support
