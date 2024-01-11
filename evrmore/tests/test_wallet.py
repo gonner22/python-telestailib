@@ -20,113 +20,113 @@ from evrmore.core.key import CPubKey, is_libsec256k1_available, use_libsecp256k1
 from evrmore.wallet import *
 
 
-class Test_CRavencoinAddress(unittest.TestCase):
+class Test_CEvrmoreAddress(unittest.TestCase):
     def test_create_from_string(self):
-        """Create CRavencoinAddress's from strings"""
+        """Create CEvrmoreAddress's from strings"""
 
         def T(str_addr, expected_bytes, expected_version, expected_class):
-            addr = CRavencoinAddress(str_addr)
+            addr = CEvrmoreAddress(str_addr)
             self.assertEqual(addr.to_bytes(), expected_bytes)
             self.assertEqual(addr.__class__, expected_class)
-            if isinstance(addr, CBase58RavencoinAddress):
+            if isinstance(addr, CBase58EvrmoreAddress):
                 self.assertEqual(addr.nVersion, expected_version)
-            elif isinstance(addr, CBech32RavencoinAddress):
+            elif isinstance(addr, CBech32EvrmoreAddress):
                 self.assertEqual(addr.witver, expected_version)
 
         T('RXCTT97MGsrguKrtcF7ewXBewdGrx8o1Hg',
           x('f06d8520dbc8719c46e9b771a1233fcd74e69b2c'), 60,
-          P2PKHRavencoinAddress)
+          P2PKHEvrmoreAddress)
 
         T('rMbLFthAWRC6tgR38UEBWXogkizPkGUKhS',
           x('a87635e97fb76177a3a086efacd841a271b7e8d5'), 122,
-          P2SHRavencoinAddress)
+          P2SHEvrmoreAddress)
 
 #        T('BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4',
 #          x('751e76e8199196d454941c45d1b3a323f1433bd6'), 0,
-#          P2WPKHRavencoinAddress)
+#          P2WPKHEvrmoreAddress)
 
 #        T('bc1qc7slrfxkknqcq2jevvvkdgvrt8080852dfjewde450xdlk4ugp7szw5tk9',
 #          x('c7a1f1a4d6b4c1802a59631966a18359de779e8a6a65973735a3ccdfdabc407d'), 0,
-#          P2WSHRavencoinAddress)
+#          P2WSHEvrmoreAddress)
 
     def test_wrong_nVersion(self):
-        """Creating a CRavencoinAddress from a unknown nVersion fails"""
+        """Creating a CEvrmoreAddress from a unknown nVersion fails"""
 
         # tests run in mainnet, so both of the following should fail
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress('mpXwg4jMtRhuSpVq4xS3HFHmCmWp9NyGKt')
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress('mpXwg4jMtRhuSpVq4xS3HFHmCmWp9NyGKt')
 
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress('2MyJKxYR2zNZZsZ39SgkCXWCfQtXKhnWSWq')
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress('2MyJKxYR2zNZZsZ39SgkCXWCfQtXKhnWSWq')
 
     def test_from_scriptPubKey(self):
         def T(hex_scriptpubkey, expected_str_address, expected_class):
             scriptPubKey = CScript(x(hex_scriptpubkey))
-            addr = CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+            addr = CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
             self.assertEqual(str(addr), expected_str_address)
             self.assertEqual(addr.__class__, expected_class)
 
         T('a914000000000000000000000000000000000000000087', 'r6Eb8FN9d1Xtmt1ZzBdtAJCynYS5jpWCRq',
-          P2SHRavencoinAddress)
+          P2SHEvrmoreAddress)
         T('76a914000000000000000000000000000000000000000088ac', 'R9HC5WtHbpoa51NCUAz86XLCmGTbkf45NT',
-          P2PKHRavencoinAddress)
+          P2PKHEvrmoreAddress)
 #        T('0014751e76e8199196d454941c45d1b3a323f1433bd6',
 #          'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4',
-#          P2WPKHRavencoinAddress)
+#          P2WPKHEvrmoreAddress)
 #        T('0020c7a1f1a4d6b4c1802a59631966a18359de779e8a6a65973735a3ccdfdabc407d',
 #          'bc1qc7slrfxkknqcq2jevvvkdgvrt8080852dfjewde450xdlk4ugp7szw5tk9',
-#          P2WSHRavencoinAddress)
+#          P2WSHEvrmoreAddress)
 
     def test_from_nonstd_scriptPubKey(self):
-        """CRavencoinAddress.from_scriptPubKey() with non-standard scriptPubKeys"""
+        """CEvrmoreAddress.from_scriptPubKey() with non-standard scriptPubKeys"""
 
         # Bad P2SH scriptPubKeys
 
         # non-canonical pushdata
         scriptPubKey = CScript(
             x('a94c14000000000000000000000000000000000000000087'))
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
 
         # Bad P2PKH scriptPubKeys
 
         # Missing a byte
         scriptPubKey = CScript(
             x('76a914000000000000000000000000000000000000000088'))
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
 
         # One extra byte
         scriptPubKey = CScript(
             x('76a914000000000000000000000000000000000000000088acac'))
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
 
         # One byte changed
         scriptPubKey = CScript(
             x('76a914000000000000000000000000000000000000000088ad'))
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
 
     def test_from_invalid_scriptPubKey(self):
-        """CRavencoinAddress.from_scriptPubKey() with invalid scriptPubKeys"""
+        """CEvrmoreAddress.from_scriptPubKey() with invalid scriptPubKeys"""
 
-        # We should raise a CRavencoinAddressError, not any other type of error
+        # We should raise a CEvrmoreAddressError, not any other type of error
 
         # Truncated P2SH
         scriptPubKey = CScript(x('a91400000000000000000000000000000000000000'))
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
 
         # Truncated P2PKH
         scriptPubKey = CScript(
             x('76a91400000000000000000000000000000000000000'))
-        with self.assertRaises(CRavencoinAddressError):
-            CRavencoinAddress.from_scriptPubKey(scriptPubKey)
+        with self.assertRaises(CEvrmoreAddressError):
+            CEvrmoreAddress.from_scriptPubKey(scriptPubKey)
 
     def test_to_redeemScript(self):
         def T(str_addr, expected_scriptPubKey_hexbytes):
-            addr = CRavencoinAddress(str_addr)
+            addr = CEvrmoreAddress(str_addr)
 
             actual_scriptPubKey = addr.to_redeemScript()
             self.assertEqual(b2x(actual_scriptPubKey),
@@ -142,9 +142,9 @@ class Test_CRavencoinAddress(unittest.TestCase):
 #          '76a914751e76e8199196d454941c45d1b3a323f1433bd688ac')
 
     def test_to_scriptPubKey(self):
-        """CRavencoinAddress.to_scriptPubKey() works"""
+        """CEvrmoreAddress.to_scriptPubKey() works"""
         def T(str_addr, expected_scriptPubKey_hexbytes):
-            addr = CRavencoinAddress(str_addr)
+            addr = CEvrmoreAddress(str_addr)
 
             actual_scriptPubKey = addr.to_scriptPubKey()
             self.assertEqual(b2x(actual_scriptPubKey),
@@ -157,10 +157,10 @@ class Test_CRavencoinAddress(unittest.TestCase):
           '76a914000000000000000000000000000000000000000088ac')
 
 
-class Test_P2SHRavencoinAddress(unittest.TestCase):
+class Test_P2SHEvrmoreAddress(unittest.TestCase):
     def test_from_redeemScript(self):
         def T(script, expected_str_address):
-            addr = P2SHRavencoinAddress.from_redeemScript(script)
+            addr = P2SHEvrmoreAddress.from_redeemScript(script)
             self.assertEqual(str(addr), expected_str_address)
 
         T(CScript(), 'rNgi5iPXJfKYt65YnocubTpm9swCcJwLTY')
@@ -168,16 +168,16 @@ class Test_P2SHRavencoinAddress(unittest.TestCase):
           'rQy5KSWuzWQwK6ZGJ8wkwLGDb5oCh5FXog')
 
 
-class Test_P2PKHRavencoinAddress(unittest.TestCase):
+class Test_P2PKHEvrmoreAddress(unittest.TestCase):
     def test_from_non_canonical_scriptPubKey(self):
         def T(hex_scriptpubkey, expected_str_address):
             scriptPubKey = CScript(x(hex_scriptpubkey))
-            addr = P2PKHRavencoinAddress.from_scriptPubKey(scriptPubKey)
+            addr = P2PKHEvrmoreAddress.from_scriptPubKey(scriptPubKey)
             self.assertEqual(str(addr), expected_str_address)
 
-            # now test that CRavencoinAddressError is raised with accept_non_canonical_pushdata=False
-            with self.assertRaises(CRavencoinAddressError):
-                P2PKHRavencoinAddress.from_scriptPubKey(
+            # now test that CEvrmoreAddressError is raised with accept_non_canonical_pushdata=False
+            with self.assertRaises(CEvrmoreAddressError):
+                P2PKHEvrmoreAddress.from_scriptPubKey(
                     scriptPubKey, accept_non_canonical_pushdata=False)
 
         T('76a94c14000000000000000000000000000000000000000088ac',
@@ -187,19 +187,19 @@ class Test_P2PKHRavencoinAddress(unittest.TestCase):
         T('76a94e14000000000000000000000000000000000000000000000088ac',
           'R9HC5WtHbpoa51NCUAz86XLCmGTbkf45NT')
 
-        # make sure invalid scripts raise CRavencoinAddressError
-        with self.assertRaises(CRavencoinAddressError):
-            P2PKHRavencoinAddress.from_scriptPubKey(x('76a94c14'))
+        # make sure invalid scripts raise CEvrmoreAddressError
+        with self.assertRaises(CEvrmoreAddressError):
+            P2PKHEvrmoreAddress.from_scriptPubKey(x('76a94c14'))
 
     def test_from_bare_checksig_scriptPubKey(self):
         def T(hex_scriptpubkey, expected_str_address):
             scriptPubKey = CScript(x(hex_scriptpubkey))
-            addr = P2PKHRavencoinAddress.from_scriptPubKey(scriptPubKey)
+            addr = P2PKHEvrmoreAddress.from_scriptPubKey(scriptPubKey)
             self.assertEqual(str(addr), expected_str_address)
 
-            # now test that CRavencoinAddressError is raised with accept_non_canonical_pushdata=False
-            with self.assertRaises(CRavencoinAddressError):
-                P2PKHRavencoinAddress.from_scriptPubKey(
+            # now test that CEvrmoreAddressError is raised with accept_non_canonical_pushdata=False
+            with self.assertRaises(CEvrmoreAddressError):
+                P2PKHEvrmoreAddress.from_scriptPubKey(
                     scriptPubKey, accept_bare_checksig=False)
 
         # compressed
@@ -215,15 +215,15 @@ class Test_P2PKHRavencoinAddress(unittest.TestCase):
           'RD6GgnrMpPaTSMn8vai6yiGA7mN4QGPVMY')
 
         # odd-lengths are *not* accepted
-        with self.assertRaises(CRavencoinAddressError):
-            P2PKHRavencoinAddress.from_scriptPubKey(
+        with self.assertRaises(CEvrmoreAddressError):
+            P2PKHEvrmoreAddress.from_scriptPubKey(
                 x('2200000000000000000000000000000000000000000000000000000000000000000000ac'))
 
     def test_from_valid_pubkey(self):
-        """Create P2PKHRavencoinAddress's from valid pubkeys"""
+        """Create P2PKHEvrmoreAddress's from valid pubkeys"""
 
         def T(pubkey, expected_str_addr):
-            addr = P2PKHRavencoinAddress.from_pubkey(pubkey)
+            addr = P2PKHEvrmoreAddress.from_pubkey(pubkey)
             self.assertEqual(str(addr), expected_str_addr)
 
         T(x('03d9e529a03f92beba94c85dd869f94388c19c6d7b7c055b3202fee0f70fbfd835'),
@@ -237,11 +237,11 @@ class Test_P2PKHRavencoinAddress(unittest.TestCase):
           'RLtrHG4X4BbipE4QkqnS16A5uLQt9dxqxp')
 
     def test_from_invalid_pubkeys(self):
-        """Create P2PKHRavencoinAddress's from invalid pubkeys"""
+        """Create P2PKHEvrmoreAddress's from invalid pubkeys"""
 
         # first test with accept_invalid=True
         def T(invalid_pubkey, expected_str_addr):
-            addr = P2PKHRavencoinAddress.from_pubkey(
+            addr = P2PKHEvrmoreAddress.from_pubkey(
                 invalid_pubkey, accept_invalid=True)
             self.assertEqual(str(addr), expected_str_addr)
 
@@ -250,21 +250,21 @@ class Test_P2PKHRavencoinAddress(unittest.TestCase):
         T(x('0378d430274f8c5ec1321338151e9f27f4c676a008bdf8638d07c0b6be9ab35c72'),
           'RURg8tQsyiNSQkDQWxjbDDDSJby1qkt5cf')
 
-        # With accept_invalid=False we should get CRavencoinAddressError's
-        with self.assertRaises(CRavencoinAddressError):
-            P2PKHRavencoinAddress.from_pubkey(x(''))
-        with self.assertRaises(CRavencoinAddressError):
-            P2PKHRavencoinAddress.from_pubkey(
+        # With accept_invalid=False we should get CEvrmoreAddressError's
+        with self.assertRaises(CEvrmoreAddressError):
+            P2PKHEvrmoreAddress.from_pubkey(x(''))
+        with self.assertRaises(CEvrmoreAddressError):
+            P2PKHEvrmoreAddress.from_pubkey(
                 x('0378d430274f8c5ec1321338151e9f27f4c676a008bdf8638d07c0b6be9ab35c72'))
-        with self.assertRaises(CRavencoinAddressError):
-            P2PKHRavencoinAddress.from_pubkey(CPubKey(
+        with self.assertRaises(CEvrmoreAddressError):
+            P2PKHEvrmoreAddress.from_pubkey(CPubKey(
                 x('0378d430274f8c5ec1321338151e9f27f4c676a008bdf8638d07c0b6be9ab35c72')))
 
 
-class Test_CRavencoinSecret(unittest.TestCase):
+class Test_CEvrmoreSecret(unittest.TestCase):
     def test(self):
         def T(base58_privkey, expected_hex_pubkey, expected_is_compressed_value):
-            key = CRavencoinSecret(base58_privkey)
+            key = CEvrmoreSecret(base58_privkey)
             self.assertEqual(b2x(key.pub), expected_hex_pubkey)
             self.assertEqual(key.is_compressed, expected_is_compressed_value)
 
@@ -276,7 +276,7 @@ class Test_CRavencoinSecret(unittest.TestCase):
           True)
 
     def test_sign(self):
-        key = CRavencoinSecret(
+        key = CEvrmoreSecret(
             '5KJvsngHeMpm884wtkJNzQGaCErckhHJBGFsvd3VyK5qMZXj3hS')
         hash = b'\x00' * 32
         sig = key.sign(hash)
@@ -294,7 +294,7 @@ class Test_CRavencoinSecret(unittest.TestCase):
         self.assertFalse(key.pub.verify(hash, sig[0:-4] + b'\x00\x00\x00\x00'))
 
     def test_sign_invalid_hash(self):
-        key = CRavencoinSecret(
+        key = CEvrmoreSecret(
             '5KJvsngHeMpm884wtkJNzQGaCErckhHJBGFsvd3VyK5qMZXj3hS')
         with self.assertRaises(TypeError):
             sig = key.sign('0' * 32)
@@ -326,7 +326,7 @@ class Test_RFC6979(unittest.TestCase):
              0x1F4B84C23A86A221D233F2521BE018D9318639D5B8BBD6374A8A59232D16AD3D, "b552edd27580141f3b2a5463048cb7cd3e047b97c9f98076c32dbdf85a68718b279fa72dd19bfae05577e06c7c0c1900c371fcd5893f7e1d56a37d30174671f6")
         ]
         for vector in test_vectors:
-            secret = CRavencoinSecret.from_secret_bytes(
+            secret = CEvrmoreSecret.from_secret_bytes(
                 x('{:064x}'.format(vector[0])))
             encoded_sig = secret.sign(hashlib.sha256(
                 vector[1].encode('utf8')).digest())

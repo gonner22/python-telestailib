@@ -24,12 +24,12 @@ from .utils import format_hash
 
 
 # Constant separating blocks in the .blk files
-EVRMORE_CONSTANT = b"\x52\x41\x56\x4e"  # RAVN
+EVRMORE_CONSTANT = b"\x45\x56\x52\x4d"  # EVRM
 
 
 def get_files(path):
     """
-    Given the path to the .raven directory, returns the sorted list of .blk
+    Given the path to the .evrmore directory, returns the sorted list of .blk
     files contained in that directory
     """
     if not stat.S_ISDIR(os.stat(path)[stat.ST_MODE]):
@@ -77,7 +77,7 @@ def get_block(blockfile, offset):
 
 class Blockchain(object):
     """Represent the blockchain contained in the series of .blk files
-    maintained by ravend.
+    maintained by evrmored.
     """
 
     def __init__(self, path):
@@ -155,7 +155,7 @@ class Blockchain(object):
     def get_ordered_blocks(self, index, start=0, end=None, cache=None):
         """Yields the blocks contained in the .blk files as per
         the heigt extract from the leveldb index present at path
-        index maintained by ravend.
+        index maintained by evrmored.
         """
 
         blockIndexes = None
@@ -177,7 +177,7 @@ class Blockchain(object):
         # Occassionally a node will receive two different solutions to a block
         # at the same time. The Leveldb index saves both, not pruning the
         # block that leads to a shorter chain once the fork is settled without
-        # "-reindex"ing the ravend block data. This leads to at least two
+        # "-reindex"ing the evrmored block data. This leads to at least two
         # blocks with the same height in the database.
         # We throw out blocks that don't have at least 60 other blocks on top of
         # it (60 confirmations).

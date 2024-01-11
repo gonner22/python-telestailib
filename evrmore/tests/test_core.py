@@ -40,7 +40,7 @@ class Test_Money(unittest.TestCase):
         self.assertFalse(MoneyRange(-1))
         self.assertTrue(MoneyRange(0))
         self.assertTrue(MoneyRange(100000))
-        # Maximum money on Ravencoin network
+        # Maximum money on Evrmore network
         self.assertTrue(MoneyRange(21000000 * 1000 * COIN))
         self.assertFalse(MoneyRange(21000001 * 1000 * COIN))
 

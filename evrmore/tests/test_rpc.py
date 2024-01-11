@@ -18,7 +18,7 @@ from evrmore.rpc import Proxy
 
 class Test_RPC(unittest.TestCase):
     # Tests disabled, see discussion below.
-    # "Looks like your unit tests won't work if Ravencoin Core isn't running;
+    # "Looks like your unit tests won't work if Evrmore Core isn't running;
     # maybe they in turn need to check that and disable the test if core isn't available?"
     # https://github.com/petertodd/python-evrmorelib/pull/10
     pass

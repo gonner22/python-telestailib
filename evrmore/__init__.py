@@ -18,23 +18,23 @@ from version import __version__
 
 
 class MainParams(evrmore.core.CoreMainParams):
-    MESSAGE_START = b'\x52\x41\x56\x4e'
+    MESSAGE_START = b'\x45\x56\x52\x4d'
     DEFAULT_PORT = 8767
     RPC_PORT = 8766
-    DNS_SEEDS = (('seed-raven.bitactivate.com', 'seed-raven.evrmore.com'),
-                 ('seed-raven.evrmore.org', ''))
-    BASE58_PREFIXES = {'PUBKEY_ADDR': 60,
-                       'SCRIPT_ADDR': 122,
+    DNS_SEEDS = (('seed-evrmore.bitactivate.com', 'seed-evrmore.evrmore.com'),
+                 ('seed-evrmore.evrmore.org', ''))
+    BASE58_PREFIXES = {'PUBKEY_ADDR': 33,
+                       'SCRIPT_ADDR': 92,
                        'SECRET_KEY': 128}
-    BECH32_HRP = ''
+    BECH32_HRP = 'ev'
 
 
 class TestNetParams(evrmore.core.CoreTestNetParams):
-    MESSAGE_START = b'\x52\x56\x4e\x54'
+    MESSAGE_START = b'\x45\x56\x52\x4d'
     DEFAULT_PORT = 18770
     RPC_PORT = 18766
-    DNS_SEEDS = (('seed-testnet-raven.bitactivate.com', 'seed-testnet-raven.evrmore.com'),
-                 ('seed-testnet-raven.evrmore.org', ''))
+    DNS_SEEDS = (('seed-testnet-evrmore.bitactivate.com', 'seed-testnet-evrmore.evrmore.com'),
+                 ('seed-testnet-evrmore.evrmore.org', ''))
     BASE58_PREFIXES = {'PUBKEY_ADDR': 111,
                        'SCRIPT_ADDR': 196,
                        'SECRET_KEY': 239}

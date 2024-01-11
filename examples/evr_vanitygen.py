@@ -10,7 +10,7 @@
 # propagated, or distributed except according to the terms contained in the
 # LICENSE file.
 
-# Ravencoin vanity address generator
+# Evrmore vanity address generator
 # This is an example of address generation in python-evrmorelib
 # Note this is not particularly secure as the private keys may remain accessible in (virtual) memory
 
@@ -20,10 +20,10 @@ import sys
 import time
 
 import evrmore.base58
-from evrmore.wallet import P2PKHRavencoinAddress, CRavencoinSecret
+from evrmore.wallet import P2PKHEvrmoreAddress, CEvrmoreSecret
 
 parser = argparse.ArgumentParser(
-    description='Ravencoin vanity address generator')
+    description='Evrmore vanity address generator')
 parser.add_argument('search', metavar='search string',
                     type=str, help='Search string')
 parser.add_argument('--anywhere', action="store_true",
@@ -48,8 +48,8 @@ evrmore.SelectParams('mainnet')
 c = 0
 start = time.time()
 while True:
-    privkey = CRavencoinSecret.from_secret_bytes(os.urandom(32))
-    addr = str(P2PKHRavencoinAddress.from_pubkey(privkey.pub))
+    privkey = CEvrmoreSecret.from_secret_bytes(os.urandom(32))
+    addr = str(P2PKHEvrmoreAddress.from_pubkey(privkey.pub))
     c += 1
     if anywhere:
         if search_s in addr:

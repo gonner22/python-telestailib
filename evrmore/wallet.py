@@ -35,129 +35,129 @@ if sys.version > '3':
     _tobytes = bytes
 
 
-class CRavencoinAddress(object):
+class CEvrmoreAddress(object):
 
     def __new__(cls, s):
         #        try:
-        #            return CBech32RavencoinAddress(s)
+        #            return CBech32EvrmoreAddress(s)
         #        except evrmore.bech32.Bech32Error:
         #            pass
 
         try:
-            return CBase58RavencoinAddress(s)
+            return CBase58EvrmoreAddress(s)
         except evrmore.base58.Base58Error:
             pass
 
-        raise CRavencoinAddressError(
+        raise CEvrmoreAddressError(
             'Unrecognized encoding for evrmore address')
 
     @classmethod
     def from_scriptPubKey(cls, scriptPubKey):
-        """Convert a scriptPubKey to a subclass of CRavencoinAddress"""
+        """Convert a scriptPubKey to a subclass of CEvrmoreAddress"""
 #        try:
-#            return CBech32RavencoinAddress.from_scriptPubKey(scriptPubKey)
-#        except CRavencoinAddressError:
+#            return CBech32EvrmoreAddress.from_scriptPubKey(scriptPubKey)
+#        except CEvrmoreAddressError:
 #            pass
 
         try:
-            return CBase58RavencoinAddress.from_scriptPubKey(scriptPubKey)
-        except CRavencoinAddressError:
+            return CBase58EvrmoreAddress.from_scriptPubKey(scriptPubKey)
+        except CEvrmoreAddressError:
             pass
 
-        raise CRavencoinAddressError(
+        raise CEvrmoreAddressError(
             'scriptPubKey is not in a recognized address format')
 
 
-class CRavencoinAddressError(Exception):
-    """Raised when an invalid Ravencoin address is encountered"""
+class CEvrmoreAddressError(Exception):
+    """Raised when an invalid Evrmore address is encountered"""
 
 
-class CBech32RavencoinAddress(evrmore.bech32.CBech32Data, CRavencoinAddress):
-    """A Bech32-encoded Ravencoin address"""
+class CBech32EvrmoreAddress(evrmore.bech32.CBech32Data, CEvrmoreAddress):
+    """A Bech32-encoded Evrmore address"""
 
     @classmethod
     def from_bytes(cls, witver, witprog):
 
         assert witver == 0
-        self = super(CBech32RavencoinAddress, cls).from_bytes(
+        self = super(CBech32EvrmoreAddress, cls).from_bytes(
             witver,
             _tobytes(witprog)
         )
 
         if len(self) == 32:
-            self.__class__ = P2WSHRavencoinAddress
+            self.__class__ = P2WSHEvrmoreAddress
         elif len(self) == 20:
-            self.__class__ = P2WPKHRavencoinAddress
+            self.__class__ = P2WPKHEvrmoreAddress
         else:
-            raise CRavencoinAddressError(
+            raise CEvrmoreAddressError(
                 'witness program does not match any known segwit address format')
 
         return self
 
     @classmethod
     def from_scriptPubKey(cls, scriptPubKey):
-        """Convert a scriptPubKey to a CBech32RavencoinAddress
+        """Convert a scriptPubKey to a CBech32EvrmoreAddress
 
-        Returns a CBech32RavencoinAddress subclass, either P2WSHRavencoinAddress or
-        P2WPKHRavencoinAddress. If the scriptPubKey is not recognized
-        CRavencoinAddressError will be raised.
+        Returns a CBech32EvrmoreAddress subclass, either P2WSHEvrmoreAddress or
+        P2WPKHEvrmoreAddress. If the scriptPubKey is not recognized
+        CEvrmoreAddressError will be raised.
         """
         try:
-            return P2WSHRavencoinAddress.from_scriptPubKey(scriptPubKey)
-        except CRavencoinAddressError:
+            return P2WSHEvrmoreAddress.from_scriptPubKey(scriptPubKey)
+        except CEvrmoreAddressError:
             pass
 
         try:
-            return P2WPKHRavencoinAddress.from_scriptPubKey(scriptPubKey)
-        except CRavencoinAddressError:
+            return P2WPKHEvrmoreAddress.from_scriptPubKey(scriptPubKey)
+        except CEvrmoreAddressError:
             pass
 
-        raise CRavencoinAddressError(
+        raise CEvrmoreAddressError(
             'scriptPubKey not a valid bech32-encoded address')
 
 
-class CBase58RavencoinAddress(evrmore.base58.CBase58Data, CRavencoinAddress):
-    """A Base58-encoded Ravencoin address"""
+class CBase58EvrmoreAddress(evrmore.base58.CBase58Data, CEvrmoreAddress):
+    """A Base58-encoded Evrmore address"""
 
     @classmethod
     def from_bytes(cls, data, nVersion):
-        self = super(CBase58RavencoinAddress, cls).from_bytes(data, nVersion)
+        self = super(CBase58EvrmoreAddress, cls).from_bytes(data, nVersion)
 
         if nVersion == evrmore.params.BASE58_PREFIXES['SCRIPT_ADDR']:
-            self.__class__ = P2SHRavencoinAddress
+            self.__class__ = P2SHEvrmoreAddress
 
         elif nVersion == evrmore.params.BASE58_PREFIXES['PUBKEY_ADDR']:
-            self.__class__ = P2PKHRavencoinAddress
+            self.__class__ = P2PKHEvrmoreAddress
 
         else:
-            raise CRavencoinAddressError(
-                'Version %d not a recognized Ravencoin Address' % nVersion)
+            raise CEvrmoreAddressError(
+                'Version %d not a recognized Evrmore Address' % nVersion)
 
         return self
 
     @classmethod
     def from_scriptPubKey(cls, scriptPubKey):
-        """Convert a scriptPubKey to a CRavencoinAddress
+        """Convert a scriptPubKey to a CEvrmoreAddress
 
-        Returns a CRavencoinAddress subclass, either P2SHRavencoinAddress or
-        P2PKHRavencoinAddress. If the scriptPubKey is not recognized
-        CRavencoinAddressError will be raised.
+        Returns a CEvrmoreAddress subclass, either P2SHEvrmoreAddress or
+        P2PKHEvrmoreAddress. If the scriptPubKey is not recognized
+        CEvrmoreAddressError will be raised.
         """
         try:
-            return P2SHRavencoinAddress.from_scriptPubKey(scriptPubKey)
-        except CRavencoinAddressError:
+            return P2SHEvrmoreAddress.from_scriptPubKey(scriptPubKey)
+        except CEvrmoreAddressError:
             pass
 
         try:
-            return P2PKHRavencoinAddress.from_scriptPubKey(scriptPubKey)
-        except CRavencoinAddressError:
+            return P2PKHEvrmoreAddress.from_scriptPubKey(scriptPubKey)
+        except CEvrmoreAddressError:
             pass
 
-        raise CRavencoinAddressError(
+        raise CEvrmoreAddressError(
             'scriptPubKey not a valid base58-encoded address')
 
 
-class P2SHRavencoinAddress(CBase58RavencoinAddress):
+class P2SHEvrmoreAddress(CBase58EvrmoreAddress):
     @classmethod
     def from_bytes(cls, data, nVersion=None):
         if nVersion is None:
@@ -167,13 +167,13 @@ class P2SHRavencoinAddress(CBase58RavencoinAddress):
             raise ValueError('nVersion incorrect for P2SH address: got %d; expected %d' %
                              (nVersion, evrmore.params.BASE58_PREFIXES['SCRIPT_ADDR']))
 
-        return super(P2SHRavencoinAddress, cls).from_bytes(data, nVersion)
+        return super(P2SHEvrmoreAddress, cls).from_bytes(data, nVersion)
 
     @classmethod
     def from_redeemScript(cls, redeemScript):
         """Convert a redeemScript to a P2SH address
 
-        Convenience function: equivalent to P2SHRavencoinAddress.from_scriptPubKey(redeemScript.to_p2sh_scriptPubKey())
+        Convenience function: equivalent to P2SHEvrmoreAddress.from_scriptPubKey(redeemScript.to_p2sh_scriptPubKey())
         """
         return cls.from_scriptPubKey(redeemScript.to_p2sh_scriptPubKey())
 
@@ -181,14 +181,14 @@ class P2SHRavencoinAddress(CBase58RavencoinAddress):
     def from_scriptPubKey(cls, scriptPubKey):
         """Convert a scriptPubKey to a P2SH address
 
-        Raises CRavencoinAddressError if the scriptPubKey isn't of the correct
+        Raises CEvrmoreAddressError if the scriptPubKey isn't of the correct
         form.
         """
         if scriptPubKey.is_p2sh():
             return cls.from_bytes(scriptPubKey[2:22], evrmore.params.BASE58_PREFIXES['SCRIPT_ADDR'])
 
         else:
-            raise CRavencoinAddressError('not a P2SH scriptPubKey')
+            raise CEvrmoreAddressError('not a P2SH scriptPubKey')
 
     def to_scriptPubKey(self):
         """Convert an address to a scriptPubKey"""
@@ -199,7 +199,7 @@ class P2SHRavencoinAddress(CBase58RavencoinAddress):
         return self.to_scriptPubKey()
 
 
-class P2PKHRavencoinAddress(CBase58RavencoinAddress):
+class P2PKHEvrmoreAddress(CBase58EvrmoreAddress):
     @classmethod
     def from_bytes(cls, data, nVersion=None):
         if nVersion is None:
@@ -209,13 +209,13 @@ class P2PKHRavencoinAddress(CBase58RavencoinAddress):
             raise ValueError('nVersion incorrect for P2PKH address: got %d; expected %d' %
                              (nVersion, evrmore.params.BASE58_PREFIXES['PUBKEY_ADDR']))
 
-        return super(P2PKHRavencoinAddress, cls).from_bytes(data, nVersion)
+        return super(P2PKHEvrmoreAddress, cls).from_bytes(data, nVersion)
 
     @classmethod
     def from_pubkey(cls, pubkey, accept_invalid=False):
         """Create a P2PKH evrmore address from a pubkey
 
-        Raises CRavencoinAddressError if pubkey is invalid, unless accept_invalid
+        Raises CEvrmoreAddressError if pubkey is invalid, unless accept_invalid
         is True.
 
         The pubkey must be a bytes instance; CECKey instances are not accepted.
@@ -228,16 +228,16 @@ class P2PKHRavencoinAddress(CBase58RavencoinAddress):
             if not isinstance(pubkey, evrmore.core.key.CPubKey):
                 pubkey = evrmore.core.key.CPubKey(pubkey)
             if not pubkey.is_fullyvalid:
-                raise CRavencoinAddressError('invalid pubkey')
+                raise CEvrmoreAddressError('invalid pubkey')
 
         pubkey_hash = evrmore.core.Hash160(pubkey)
-        return P2PKHRavencoinAddress.from_bytes(pubkey_hash)
+        return P2PKHEvrmoreAddress.from_bytes(pubkey_hash)
 
     @classmethod
     def from_scriptPubKey(cls, scriptPubKey, accept_non_canonical_pushdata=True, accept_bare_checksig=True):
         """Convert a scriptPubKey to a P2PKH address
 
-        Raises CRavencoinAddressError if the scriptPubKey isn't of the correct
+        Raises CEvrmoreAddressError if the scriptPubKey isn't of the correct
         form.
 
         accept_non_canonical_pushdata - Allow non-canonical pushes (default True)
@@ -253,7 +253,7 @@ class P2PKHRavencoinAddress(CBase58RavencoinAddress):
                 scriptPubKey = script.CScript(
                     tuple(scriptPubKey))  # canonicalize
             except evrmore.core.script.CScriptInvalidError:
-                raise CRavencoinAddressError(
+                raise CEvrmoreAddressError(
                     'not a P2PKH scriptPubKey: script is invalid')
 
         if scriptPubKey.is_witness_v0_keyhash():
@@ -288,7 +288,7 @@ class P2PKHRavencoinAddress(CBase58RavencoinAddress):
             if pubkey is not None:
                 return cls.from_pubkey(pubkey, accept_invalid=True)
 
-        raise CRavencoinAddressError('not a P2PKH scriptPubKey')
+        raise CEvrmoreAddressError('not a P2PKH scriptPubKey')
 
     def to_scriptPubKey(self, nested=False):
         """Convert an address to a scriptPubKey"""
@@ -299,19 +299,19 @@ class P2PKHRavencoinAddress(CBase58RavencoinAddress):
         return self.to_scriptPubKey()
 
 
-class P2WSHRavencoinAddress(CBech32RavencoinAddress):
+class P2WSHEvrmoreAddress(CBech32EvrmoreAddress):
 
     @classmethod
     def from_scriptPubKey(cls, scriptPubKey):
         """Convert a scriptPubKey to a P2WSH address
 
-        Raises CRavencoinAddressError if the scriptPubKey isn't of the correct
+        Raises CEvrmoreAddressError if the scriptPubKey isn't of the correct
         form.
         """
         if scriptPubKey.is_witness_v0_scripthash():
             return cls.from_bytes(0, scriptPubKey[2:34])
         else:
-            raise CRavencoinAddressError('not a P2WSH scriptPubKey')
+            raise CEvrmoreAddressError('not a P2WSH scriptPubKey')
 
     def to_scriptPubKey(self):
         """Convert an address to a scriptPubKey"""
@@ -322,19 +322,19 @@ class P2WSHRavencoinAddress(CBech32RavencoinAddress):
         return NotImplementedError("not enough data in p2wsh address to reconstruct redeem script")
 
 
-class P2WPKHRavencoinAddress(CBech32RavencoinAddress):
+class P2WPKHEvrmoreAddress(CBech32EvrmoreAddress):
 
     @classmethod
     def from_scriptPubKey(cls, scriptPubKey):
         """Convert a scriptPubKey to a P2WSH address
 
-        Raises CRavencoinAddressError if the scriptPubKey isn't of the correct
+        Raises CEvrmoreAddressError if the scriptPubKey isn't of the correct
         form.
         """
         if scriptPubKey.is_witness_v0_keyhash():
             return cls.from_bytes(0, scriptPubKey[2:22])
         else:
-            raise CRavencoinAddressError('not a P2WPKH scriptPubKey')
+            raise CEvrmoreAddressError('not a P2WPKH scriptPubKey')
 
     def to_scriptPubKey(self):
         """Convert an address to a scriptPubKey"""
@@ -375,11 +375,11 @@ class CKey(object):
         return self._cec_key.sign_compact(hash)
 
 
-class CRavencoinSecretError(evrmore.base58.Base58Error):
+class CEvrmoreSecretError(evrmore.base58.Base58Error):
     pass
 
 
-class CRavencoinSecret(evrmore.base58.CBase58Data, CKey):
+class CEvrmoreSecret(evrmore.base58.CBase58Data, CKey):
     """A base58-encoded secret key"""
 
     @classmethod
@@ -392,23 +392,23 @@ class CRavencoinSecret(evrmore.base58.CBase58Data, CKey):
 
     def __init__(self, s):
         if self.nVersion != evrmore.params.BASE58_PREFIXES['SECRET_KEY']:
-            raise CRavencoinSecretError('Not a base58-encoded secret key: got nVersion=%d; expected nVersion=%d' %
-                                        (self.nVersion, evrmore.params.BASE58_PREFIXES['SECRET_KEY']))
+            raise CEvrmoreSecretError('Not a base58-encoded secret key: got nVersion=%d; expected nVersion=%d' %
+                                      (self.nVersion, evrmore.params.BASE58_PREFIXES['SECRET_KEY']))
 
         CKey.__init__(self, self[0:32], len(self) >
                       32 and _bord(self[32]) == 1)
 
 
 __all__ = (
-    'CRavencoinAddressError',
-    'CRavencoinAddress',
-    'CBase58RavencoinAddress',
-    'CBech32RavencoinAddress',
-    'P2SHRavencoinAddress',
-    'P2PKHRavencoinAddress',
-    'P2WSHRavencoinAddress',
-    'P2WPKHRavencoinAddress',
+    'CEvrmoreAddressError',
+    'CEvrmoreAddress',
+    'CBase58EvrmoreAddress',
+    'CBech32EvrmoreAddress',
+    'P2SHEvrmoreAddress',
+    'P2PKHEvrmoreAddress',
+    'P2WSHEvrmoreAddress',
+    'P2WPKHEvrmoreAddress',
     'CKey',
-    'CRavencoinSecretError',
-    'CRavencoinSecret',
+    'CEvrmoreSecretError',
+    'CEvrmoreSecret',
 )

@@ -17,11 +17,11 @@ import evrmore.core
 from evrmore.rpc import RavenProxy
 from evrmore.core import COIN
 from evrmore.core.assets import RvnAssetData
-from evrmore.core.script import OP_RVN_ASSET, CScriptOp
+from evrmore.core.script import OP_EVR_ASSET, CScriptOp
 from evrmore.assets import CAssetName
 
 parser = argparse.ArgumentParser(
-    description='Scans Ravencoin blockchain for assets using RPC')
+    description='Scans Evrmore blockchain for assets using RPC')
 parser.add_argument('--testnet', action="store_true",
                     help="Use testnet (default: mainnet)")
 parser.add_argument('--startblock', type=int, default=0,
@@ -55,8 +55,8 @@ for c in range(start, end):
                 get_data = False
                 data = []
                 for x in v.scriptPubKey:
-                    if x == OP_RVN_ASSET:
-                        get_data = True    # found OP_RVN_ASSET, 1 or more data pushes follow
+                    if x == OP_EVR_ASSET:
+                        get_data = True    # found OP_EVR_ASSET, 1 or more data pushes follow
                         continue
                     if get_data:
                         if type(x) is not CScriptOp:

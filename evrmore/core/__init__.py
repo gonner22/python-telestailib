@@ -434,8 +434,8 @@ class CTransaction(ImmutableSerializable):
     def stream_deserialize(cls, f):
         """Deserialize transaction
 
-        This implementation corresponds to Ravencoin's SerializeTransaction() and
-        consensus behavior. Note that Ravencoin's DecodeHexTx() also has the
+        This implementation corresponds to Evrmore's SerializeTransaction() and
+        consensus behavior. Note that Evrmore's DecodeHexTx() also has the
         option to attempt deserializing as a non-witness transaction first,
         falling back to the consensus behavior if it fails. The difference lies
         in transactions which have zero inputs: they are invalid but may be
@@ -646,7 +646,7 @@ class CBlock(CBlockHeader):
         WARNING! If you're reading this because you're learning about crypto
         and/or designing a new system that will use merkle trees, keep in mind
         that the following merkle tree algorithm has a serious flaw related to
-        duplicate txids, resulting in a vulnerability. (CVE-2012-2459) Ravencoin
+        duplicate txids, resulting in a vulnerability. (CVE-2012-2459) Evrmore
         has since worked around the flaw, but for new applications you should
         use something different; don't just copy-and-paste this code without
         understanding the problem first.
@@ -800,7 +800,7 @@ class CBlock(CBlockHeader):
 
 
 class CoreChainParams(object):
-    """Define consensus-critical parameters of a given instance of the Ravencoin system"""
+    """Define consensus-critical parameters of a given instance of the Evrmore system"""
     MAX_MONEY = None
     GENESIS_BLOCK = None
     PROOF_OF_WORK_LIMIT = None

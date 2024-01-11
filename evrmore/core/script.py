@@ -16,24 +16,22 @@ is in evrmore.core.scripteval
 """
 
 from __future__ import absolute_import, division, print_function
+from .serialize import *
+import evrmore.core._bignum
+import evrmore.core
+import struct
 
 import sys
 _bchr = chr
 _bord = ord
 if sys.version > '3':
     long = int
-    _bchr = lambda x: bytes([x])
-    _bord = lambda x: x
+    def _bchr(x): return bytes([x])
+    def _bord(x): return x
     from io import BytesIO as _BytesIO
 else:
     from cStringIO import StringIO as _BytesIO
 
-import struct
-
-import evrmore.core
-import evrmore.core._bignum
-
-from .serialize import *
 
 MAX_SCRIPT_SIZE = 10000
 MAX_SCRIPT_ELEMENT_SIZE = 520
@@ -42,6 +40,8 @@ MAX_SCRIPT_OPCODES = 201
 OPCODE_NAMES = {}
 
 _opcode_instances = []
+
+
 class CScriptOp(int):
     """A single script opcode"""
     __slots__ = []
@@ -50,13 +50,13 @@ class CScriptOp(int):
     def encode_op_pushdata(d):
         """Encode a PUSHDATA op, returning bytes"""
         if len(d) < 0x4c:
-            return b'' + _bchr(len(d)) + d # OP_PUSHDATA
+            return b'' + _bchr(len(d)) + d  # OP_PUSHDATA
         elif len(d) <= 0xff:
-            return b'\x4c' + _bchr(len(d)) + d # OP_PUSHDATA1
+            return b'\x4c' + _bchr(len(d)) + d  # OP_PUSHDATA1
         elif len(d) <= 0xffff:
-            return b'\x4d' + struct.pack(b'<H', len(d)) + d # OP_PUSHDATA2
+            return b'\x4d' + struct.pack(b'<H', len(d)) + d  # OP_PUSHDATA2
         elif len(d) <= 0xffffffff:
-            return b'\x4e' + struct.pack(b'<I', len(d)) + d # OP_PUSHDATA4
+            return b'\x4e' + struct.pack(b'<I', len(d)) + d  # OP_PUSHDATA4
         else:
             raise ValueError("Data too long to encode in a PUSHDATA op")
 
@@ -64,7 +64,8 @@ class CScriptOp(int):
     def encode_op_n(n):
         """Encode a small integer op, returning an opcode"""
         if not (0 <= n <= 16):
-            raise ValueError('Integer must be in range 0 <= n <= 16, got %d' % n)
+            raise ValueError(
+                'Integer must be in range 0 <= n <= 16, got %d' % n)
 
         if n == 0:
             return OP_0
@@ -104,6 +105,7 @@ class CScriptOp(int):
             assert len(_opcode_instances) == n
             _opcode_instances.append(super(CScriptOp, cls).__new__(cls, n))
             return _opcode_instances[n]
+
 
 # Populate opcode instance table
 for n in range(0xff+1):
@@ -251,7 +253,7 @@ OP_PUBKEY = CScriptOp(0xfe)
 
 OP_INVALIDOPCODE = CScriptOp(0xff)
 
-OP_RVN_ASSET = CScriptOp(0xc0)
+OP_EVR_ASSET = CScriptOp(0xc0)
 
 OPCODE_NAMES.update({
     OP_0: 'OP_0',
@@ -371,7 +373,7 @@ OPCODE_NAMES.update({
     OP_PUBKEYHASH: 'OP_PUBKEYHASH',
     OP_PUBKEY: 'OP_PUBKEY',
     OP_INVALIDOPCODE: 'OP_INVALIDOPCODE',
-    OP_RVN_ASSET: 'OP_RVN_ASSET',
+    OP_EVR_ASSET: 'OP_EVR_ASSET',
 })
 
 OPCODES_BY_NAME = {
@@ -491,7 +493,7 @@ OPCODES_BY_NAME = {
     'OP_PUBKEYS': OP_PUBKEYS,
     'OP_PUBKEYHASH': OP_PUBKEYHASH,
     'OP_PUBKEY': OP_PUBKEY,
-    'OP_RVN_ASSET': OP_RVN_ASSET
+    'OP_EVR_ASSET': OP_EVR_ASSET
 }
 
 # Invalid even when occuring in an unexecuted OP_IF branch due to either being
@@ -501,15 +503,19 @@ DISABLED_OPCODES = frozenset((OP_VERIF, OP_VERNOTIF,
                               OP_OR, OP_XOR, OP_2MUL, OP_2DIV, OP_MUL, OP_DIV, OP_MOD,
                               OP_LSHIFT, OP_RSHIFT))
 
+
 class CScriptInvalidError(Exception):
     """Base class for CScript exceptions"""
     pass
 
+
 class CScriptTruncatedPushDataError(CScriptInvalidError):
     """Invalid pushdata due to truncation"""
+
     def __init__(self, msg, data):
         self.data = data
         super(CScriptTruncatedPushDataError, self).__init__(msg)
+
 
 class CScript(bytes):
     """Serialized script
@@ -532,7 +538,8 @@ class CScript(bytes):
             elif other == -1:
                 other = bytes(_bchr(OP_1NEGATE))
             else:
-                other = CScriptOp.encode_op_pushdata(evrmore.core._bignum.bn2vch(other))
+                other = CScriptOp.encode_op_pushdata(
+                    evrmore.core._bignum.bn2vch(other))
         elif isinstance(other, (bytes, bytearray)):
             other = CScriptOp.encode_op_pushdata(other)
         return other
@@ -546,7 +553,8 @@ class CScript(bytes):
             # bytes.__add__ always returns bytes instances unfortunately
             return CScript(super(CScript, self).__add__(other))
         except TypeError:
-            raise TypeError('Can not add a %r instance to a CScript' % other.__class__)
+            raise TypeError(
+                'Can not add a %r instance to a CScript' % other.__class__)
 
     def join(self, iterable):
         # join makes no sense for a CScript()
@@ -588,33 +596,37 @@ class CScript(bytes):
                 elif opcode == OP_PUSHDATA1:
                     pushdata_type = 'PUSHDATA1'
                     if i >= len(self):
-                        raise CScriptInvalidError('PUSHDATA1: missing data length')
+                        raise CScriptInvalidError(
+                            'PUSHDATA1: missing data length')
                     datasize = _bord(self[i])
                     i += 1
 
                 elif opcode == OP_PUSHDATA2:
                     pushdata_type = 'PUSHDATA2'
                     if i + 1 >= len(self):
-                        raise CScriptInvalidError('PUSHDATA2: missing data length')
+                        raise CScriptInvalidError(
+                            'PUSHDATA2: missing data length')
                     datasize = _bord(self[i]) + (_bord(self[i+1]) << 8)
                     i += 2
 
                 elif opcode == OP_PUSHDATA4:
                     pushdata_type = 'PUSHDATA4'
                     if i + 3 >= len(self):
-                        raise CScriptInvalidError('PUSHDATA4: missing data length')
-                    datasize = _bord(self[i]) + (_bord(self[i+1]) << 8) + (_bord(self[i+2]) << 16) + (_bord(self[i+3]) << 24)
+                        raise CScriptInvalidError(
+                            'PUSHDATA4: missing data length')
+                    datasize = _bord(self[i]) + (_bord(self[i+1]) << 8) + \
+                        (_bord(self[i+2]) << 16) + (_bord(self[i+3]) << 24)
                     i += 4
 
                 else:
-                    assert False # shouldn't happen
-
+                    assert False  # shouldn't happen
 
                 data = bytes(self[i:i+datasize])
 
                 # Check for truncation
                 if len(data) < datasize:
-                    raise CScriptTruncatedPushDataError('%s: truncated data' % pushdata_type, data)
+                    raise CScriptTruncatedPushDataError(
+                        '%s: truncated data' % pushdata_type, data)
 
                 i += datasize
 
@@ -726,7 +738,7 @@ class CScript(bytes):
         Note that this test is consensus-critical.
 
         Scripts that contain invalid pushdata ops return False, matching the
-        behavior in Ravencoin Core.
+        behavior in Evrmore Core.
         """
         try:
             for (op, op_data, idx) in self.raw_iter():
@@ -764,7 +776,7 @@ class CScript(bytes):
                     # Could have used a OP_PUSHDATA2.
                     return False
 
-        except CScriptInvalidError: # Invalid pushdata
+        except CScriptInvalidError:  # Invalid pushdata
             return False
         return True
 
@@ -798,7 +810,8 @@ class CScript(bytes):
         possible to redeem P2SH outputs with redeem scripts >520 bytes.
         """
         if checksize and len(self) > MAX_SCRIPT_ELEMENT_SIZE:
-            raise ValueError("redeemScript exceeds max allowed size; P2SH output would be unspendable")
+            raise ValueError(
+                "redeemScript exceeds max allowed size; P2SH output would be unspendable")
         return CScript([OP_HASH160, evrmore.core.Hash160(self), OP_EQUAL])
 
     def GetSigOpCount(self, fAccurate):
@@ -820,6 +833,7 @@ class CScript(bytes):
                     n += 20
             lastOpcode = opcode
         return n
+
 
 class CScriptWitness(ImmutableSerializable):
     """An encoding of the data elements on the initial stack for (segregated
@@ -859,6 +873,7 @@ SIGHASH_NONE = 2
 SIGHASH_SINGLE = 3
 SIGHASH_ANYONECANPAY = 0x80
 
+
 def FindAndDelete(script, sig):
     """Consensus critical, see FindAndDelete() in Satoshi codebase"""
     r = b''
@@ -876,6 +891,7 @@ def FindAndDelete(script, sig):
         r += script[last_sop_idx:]
     return CScript(r)
 
+
 def IsLowDERSignature(sig):
     """
     Loosely correlates with IsLowDERSignature() from script/interpreter.cpp
@@ -888,19 +904,21 @@ def IsLowDERSignature(sig):
     length_s = sig[5 + length_r]
     if isinstance(length_s, str):
         length_s = int(struct.unpack('B', length_s)[0])
-    s_val = list(struct.unpack(str(length_s) + 'B', sig[6 + length_r:6 + length_r + length_s]))
+    s_val = list(struct.unpack(str(length_s) + 'B',
+                 sig[6 + length_r:6 + length_r + length_s]))
 
     # If the S value is above the order of the curve divided by two, its
     # complement modulo the order could have been used instead, which is
     # one byte shorter when encoded correctly.
     max_mod_half_order = [
-      0x7f,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-      0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-      0x5d,0x57,0x6e,0x73,0x57,0xa4,0x50,0x1d,
-      0xdf,0xe9,0x2f,0x46,0x68,0x1b,0x20,0xa0]
+        0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0x5d, 0x57, 0x6e, 0x73, 0x57, 0xa4, 0x50, 0x1d,
+        0xdf, 0xe9, 0x2f, 0x46, 0x68, 0x1b, 0x20, 0xa0]
 
     return CompareBigEndian(s_val, [0]) > 0 and \
-      CompareBigEndian(s_val, max_mod_half_order) <= 0
+        CompareBigEndian(s_val, max_mod_half_order) <= 0
+
 
 def CompareBigEndian(c1, c2):
     """
@@ -945,7 +963,8 @@ def RawSignatureHash(script, txTo, inIdx, hashtype):
 
     for txin in txtmp.vin:
         txin.scriptSig = b''
-    txtmp.vin[inIdx].scriptSig = FindAndDelete(script, CScript([OP_CODESEPARATOR]))
+    txtmp.vin[inIdx].scriptSig = FindAndDelete(
+        script, CScript([OP_CODESEPARATOR]))
 
     if (hashtype & 0x1f) == SIGHASH_NONE:
         txtmp.vout = []
@@ -982,8 +1001,10 @@ def RawSignatureHash(script, txTo, inIdx, hashtype):
 
     return (hash, None)
 
+
 SIGVERSION_BASE = 0
 SIGVERSION_WITNESS_V0 = 1
+
 
 def SignatureHash(script, txTo, inIdx, hashtype, amount=None, sigversion=SIGVERSION_BASE):
     """Calculate a signature hash
@@ -996,7 +1017,7 @@ def SignatureHash(script, txTo, inIdx, hashtype, amount=None, sigversion=SIGVERS
     if sigversion == SIGVERSION_WITNESS_V0:
         hashPrevouts = b'\x00'*32
         hashSequence = b'\x00'*32
-        hashOutputs  = b'\x00'*32
+        hashOutputs = b'\x00'*32
 
         if not (hashtype & SIGHASH_ANYONECANPAY):
             serialize_prevouts = bytes()
@@ -1042,148 +1063,148 @@ def SignatureHash(script, txTo, inIdx, hashtype, amount=None, sigversion=SIGVERS
 
 
 __all__ = (
-        'MAX_SCRIPT_SIZE',
-        'MAX_SCRIPT_ELEMENT_SIZE',
-        'MAX_SCRIPT_OPCODES',
-        'OPCODE_NAMES',
-        'CScriptOp',
+    'MAX_SCRIPT_SIZE',
+    'MAX_SCRIPT_ELEMENT_SIZE',
+    'MAX_SCRIPT_OPCODES',
+    'OPCODE_NAMES',
+    'CScriptOp',
 
-        # every opcode
-        'OP_0',
-        'OP_FALSE',
-        'OP_PUSHDATA1',
-        'OP_PUSHDATA2',
-        'OP_PUSHDATA4',
-        'OP_1NEGATE',
-        'OP_RESERVED',
-        'OP_1',
-        'OP_TRUE',
-        'OP_2',
-        'OP_3',
-        'OP_4',
-        'OP_5',
-        'OP_6',
-        'OP_7',
-        'OP_8',
-        'OP_9',
-        'OP_10',
-        'OP_11',
-        'OP_12',
-        'OP_13',
-        'OP_14',
-        'OP_15',
-        'OP_16',
-        'OP_NOP',
-        'OP_VER',
-        'OP_IF',
-        'OP_NOTIF',
-        'OP_VERIF',
-        'OP_VERNOTIF',
-        'OP_ELSE',
-        'OP_ENDIF',
-        'OP_VERIFY',
-        'OP_RETURN',
-        'OP_TOALTSTACK',
-        'OP_FROMALTSTACK',
-        'OP_2DROP',
-        'OP_2DUP',
-        'OP_3DUP',
-        'OP_2OVER',
-        'OP_2ROT',
-        'OP_2SWAP',
-        'OP_IFDUP',
-        'OP_DEPTH',
-        'OP_DROP',
-        'OP_DUP',
-        'OP_NIP',
-        'OP_OVER',
-        'OP_PICK',
-        'OP_ROLL',
-        'OP_ROT',
-        'OP_SWAP',
-        'OP_TUCK',
-        'OP_CAT',
-        'OP_SUBSTR',
-        'OP_LEFT',
-        'OP_RIGHT',
-        'OP_SIZE',
-        'OP_INVERT',
-        'OP_AND',
-        'OP_OR',
-        'OP_XOR',
-        'OP_EQUAL',
-        'OP_EQUALVERIFY',
-        'OP_RESERVED1',
-        'OP_RESERVED2',
-        'OP_1ADD',
-        'OP_1SUB',
-        'OP_2MUL',
-        'OP_2DIV',
-        'OP_NEGATE',
-        'OP_ABS',
-        'OP_NOT',
-        'OP_0NOTEQUAL',
-        'OP_ADD',
-        'OP_SUB',
-        'OP_MUL',
-        'OP_DIV',
-        'OP_MOD',
-        'OP_LSHIFT',
-        'OP_RSHIFT',
-        'OP_BOOLAND',
-        'OP_BOOLOR',
-        'OP_NUMEQUAL',
-        'OP_NUMEQUALVERIFY',
-        'OP_NUMNOTEQUAL',
-        'OP_LESSTHAN',
-        'OP_GREATERTHAN',
-        'OP_LESSTHANOREQUAL',
-        'OP_GREATERTHANOREQUAL',
-        'OP_MIN',
-        'OP_MAX',
-        'OP_WITHIN',
-        'OP_RIPEMD160',
-        'OP_SHA1',
-        'OP_SHA256',
-        'OP_HASH160',
-        'OP_HASH256',
-        'OP_CODESEPARATOR',
-        'OP_CHECKSIG',
-        'OP_CHECKSIGVERIFY',
-        'OP_CHECKMULTISIG',
-        'OP_CHECKMULTISIGVERIFY',
-        'OP_NOP1',
-        'OP_NOP2',
-        'OP_CHECKLOCKTIMEVERIFY',
-        'OP_NOP3',
-        'OP_NOP4',
-        'OP_NOP5',
-        'OP_NOP6',
-        'OP_NOP7',
-        'OP_NOP8',
-        'OP_NOP9',
-        'OP_NOP10',
-        'OP_SMALLINTEGER',
-        'OP_PUBKEYS',
-        'OP_PUBKEYHASH',
-        'OP_PUBKEY',
-        'OP_INVALIDOPCODE',
+    # every opcode
+    'OP_0',
+    'OP_FALSE',
+    'OP_PUSHDATA1',
+    'OP_PUSHDATA2',
+    'OP_PUSHDATA4',
+    'OP_1NEGATE',
+    'OP_RESERVED',
+    'OP_1',
+    'OP_TRUE',
+    'OP_2',
+    'OP_3',
+    'OP_4',
+    'OP_5',
+    'OP_6',
+    'OP_7',
+    'OP_8',
+    'OP_9',
+    'OP_10',
+    'OP_11',
+    'OP_12',
+    'OP_13',
+    'OP_14',
+    'OP_15',
+    'OP_16',
+    'OP_NOP',
+    'OP_VER',
+    'OP_IF',
+    'OP_NOTIF',
+    'OP_VERIF',
+    'OP_VERNOTIF',
+    'OP_ELSE',
+    'OP_ENDIF',
+    'OP_VERIFY',
+    'OP_RETURN',
+    'OP_TOALTSTACK',
+    'OP_FROMALTSTACK',
+    'OP_2DROP',
+    'OP_2DUP',
+    'OP_3DUP',
+    'OP_2OVER',
+    'OP_2ROT',
+    'OP_2SWAP',
+    'OP_IFDUP',
+    'OP_DEPTH',
+    'OP_DROP',
+    'OP_DUP',
+    'OP_NIP',
+    'OP_OVER',
+    'OP_PICK',
+    'OP_ROLL',
+    'OP_ROT',
+    'OP_SWAP',
+    'OP_TUCK',
+    'OP_CAT',
+    'OP_SUBSTR',
+    'OP_LEFT',
+    'OP_RIGHT',
+    'OP_SIZE',
+    'OP_INVERT',
+    'OP_AND',
+    'OP_OR',
+    'OP_XOR',
+    'OP_EQUAL',
+    'OP_EQUALVERIFY',
+    'OP_RESERVED1',
+    'OP_RESERVED2',
+    'OP_1ADD',
+    'OP_1SUB',
+    'OP_2MUL',
+    'OP_2DIV',
+    'OP_NEGATE',
+    'OP_ABS',
+    'OP_NOT',
+    'OP_0NOTEQUAL',
+    'OP_ADD',
+    'OP_SUB',
+    'OP_MUL',
+    'OP_DIV',
+    'OP_MOD',
+    'OP_LSHIFT',
+    'OP_RSHIFT',
+    'OP_BOOLAND',
+    'OP_BOOLOR',
+    'OP_NUMEQUAL',
+    'OP_NUMEQUALVERIFY',
+    'OP_NUMNOTEQUAL',
+    'OP_LESSTHAN',
+    'OP_GREATERTHAN',
+    'OP_LESSTHANOREQUAL',
+    'OP_GREATERTHANOREQUAL',
+    'OP_MIN',
+    'OP_MAX',
+    'OP_WITHIN',
+    'OP_RIPEMD160',
+    'OP_SHA1',
+    'OP_SHA256',
+    'OP_HASH160',
+    'OP_HASH256',
+    'OP_CODESEPARATOR',
+    'OP_CHECKSIG',
+    'OP_CHECKSIGVERIFY',
+    'OP_CHECKMULTISIG',
+    'OP_CHECKMULTISIGVERIFY',
+    'OP_NOP1',
+    'OP_NOP2',
+    'OP_CHECKLOCKTIMEVERIFY',
+    'OP_NOP3',
+    'OP_NOP4',
+    'OP_NOP5',
+    'OP_NOP6',
+    'OP_NOP7',
+    'OP_NOP8',
+    'OP_NOP9',
+    'OP_NOP10',
+    'OP_SMALLINTEGER',
+    'OP_PUBKEYS',
+    'OP_PUBKEYHASH',
+    'OP_PUBKEY',
+    'OP_INVALIDOPCODE',
 
-        'OPCODES_BY_NAME',
-        'DISABLED_OPCODES',
-        'CScriptInvalidError',
-        'CScriptTruncatedPushDataError',
-        'CScript',
-        'CScriptWitness',
-        'SIGHASH_ALL',
-        'SIGHASH_NONE',
-        'SIGHASH_SINGLE',
-        'SIGHASH_ANYONECANPAY',
-        'FindAndDelete',
-        'RawSignatureHash',
-        'SignatureHash',
-        'IsLowDERSignature',
+    'OPCODES_BY_NAME',
+    'DISABLED_OPCODES',
+    'CScriptInvalidError',
+    'CScriptTruncatedPushDataError',
+    'CScript',
+    'CScriptWitness',
+    'SIGHASH_ALL',
+    'SIGHASH_NONE',
+    'SIGHASH_SINGLE',
+    'SIGHASH_ANYONECANPAY',
+    'FindAndDelete',
+    'RawSignatureHash',
+    'SignatureHash',
+    'IsLowDERSignature',
 
-        'SIGVERSION_BASE',
-        'SIGVERSION_WITNESS_V0',
+    'SIGVERSION_BASE',
+    'SIGVERSION_WITNESS_V0',
 )

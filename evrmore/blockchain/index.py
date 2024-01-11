@@ -8,7 +8,7 @@ BLOCK_HAVE_UNDO = 16
 
 def _read_varint(raw_hex):
     """
-    Reads the weird format of VarInt present in src/serialize.h of raven core
+    Reads the weird format of VarInt present in src/serialize.h of evrmore core
     and being used for storing data in the leveldb.
     This is not the VARINT format described for general evrmore serialization
     use.

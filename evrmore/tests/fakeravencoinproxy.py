@@ -1,14 +1,14 @@
 """
-`FakeRavencoinProxy` allows for unit testing of code that normally uses evrmore
+`FakeEvrmoreProxy` allows for unit testing of code that normally uses evrmore
 RPC without requiring a running evrmore node.
 
-`FakeRavencoinProxy` has an interface similar to `evrmore.rpc.Proxy`, but does not
-connect to a local evrmore RPC node. Hence, `FakeRavencoinProxy` is similar to a
+`FakeEvrmoreProxy` has an interface similar to `evrmore.rpc.Proxy`, but does not
+connect to a local evrmore RPC node. Hence, `FakeEvrmoreProxy` is similar to a
 mock for the RPC tests.
 
-`FakeRavencoinProxy` does _not_ implement a full evrmore RPC node. Instead, it
+`FakeEvrmoreProxy` does _not_ implement a full evrmore RPC node. Instead, it
 currently implements only a subset of the available RPC commands. Test setup is
-responsible for populating a `FakeRavencoinProxy` object with reasonable mock
+responsible for populating a `FakeEvrmoreProxy` object with reasonable mock
 data.
 
 :author: Bryan Bishop <kanzure@gmail.com>
@@ -43,27 +43,27 @@ from evrmore.core import (
 
 from evrmore.wallet import (
     # evrmore address initialized from base58-encoded string
-    CRavencoinAddress,
+    CEvrmoreAddress,
 
     # base58-encoded secret key
-    CRavencoinSecret,
+    CEvrmoreSecret,
 
     # has a nifty function from_pubkey
-    P2PKHRavencoinAddress,
+    P2PKHEvrmoreAddress,
 )
 
 
 def make_address_from_passphrase(passphrase, compressed=True, as_str=True):
     """
-    Create a Ravencoin address from a passphrase. The passphrase is hashed and
-    then used as the secret bytes to construct the CRavencoinSecret.
+    Create a Evrmore address from a passphrase. The passphrase is hashed and
+    then used as the secret bytes to construct the CEvrmoreSecret.
     """
     if not isinstance(passphrase, bytes):
         passphrase = bytes(passphrase, "utf-8")
     passphrasehash = hashlib.sha256(passphrase).digest()
-    private_key = CRavencoinSecret.from_secret_bytes(
+    private_key = CEvrmoreSecret.from_secret_bytes(
         passphrasehash, compressed=compressed)
-    address = P2PKHRavencoinAddress.from_pubkey(private_key.pub)
+    address = P2PKHEvrmoreAddress.from_pubkey(private_key.pub)
     if as_str:
         return str(address)
     else:
@@ -92,14 +92,14 @@ def make_txout(amount=None, address=None, counter=None):
         # between 0 satoshi and 21 million BTC
         amount = random.randrange(0, maxsatoshis)
 
-    txout = CMutableTxOut(amount, CRavencoinAddress(address).to_scriptPubKey())
+    txout = CMutableTxOut(amount, CEvrmoreAddress(address).to_scriptPubKey())
 
     return txout
 
 
 def make_blocks_from_blockhashes(blockhashes):
     """
-    Create some block data suitable for FakeRavencoinProxy to consume during
+    Create some block data suitable for FakeEvrmoreProxy to consume during
     instantiation.
     """
     blocks = []
@@ -127,14 +127,14 @@ def make_rpc_batch_request_entry(rpc_name, params):
     }
 
 
-class FakeRavencoinProxyException(Exception):
+class FakeEvrmoreProxyException(Exception):
     """
     Incorrect usage of fake proxy.
     """
     pass
 
 
-class FakeRavencoinProxy(object):
+class FakeEvrmoreProxy(object):
     """
     This is an alternative to using `evrmore.rpc.Proxy` in tests. This class
     can store a number of blocks and transactions, which can then be retrieved
@@ -234,7 +234,7 @@ class FakeRavencoinProxy(object):
             self._getnewaddress_offset)
         address = make_address_from_passphrase(bytes(passphrase, "utf-8"))
         self._getnewaddress_offset += 1
-        return CRavencoinAddress(address)
+        return CEvrmoreAddress(address)
 
     def importaddress(self, *args, **kwargs):
         """
@@ -257,7 +257,7 @@ class FakeRavencoinProxy(object):
         elif isinstance(given_transaction, CMutableTransaction):
             given_bytes = given_transaction.serialize()
         else:
-            raise FakeRavencoinProxyException(
+            raise FakeEvrmoreProxyException(
                 "Wrong type passed to fundrawtransaction.")
 
         # this is also a clever way to not cause a side-effect in this function
@@ -285,7 +285,7 @@ class FakeRavencoinProxy(object):
         elif isinstance(given_transaction, CMutableTransaction):
             given_bytes = given_transaction.serialize()
         else:
-            raise FakeRavencoinProxyException(
+            raise FakeEvrmoreProxyException(
                 "Wrong type passed to signrawtransaction.")
 
         transaction = CMutableTransaction.deserialize(given_bytes)
@@ -302,7 +302,7 @@ class FakeRavencoinProxy(object):
         elif isinstance(given_transaction, CMutableTransaction):
             given_bytes = given_transaction.serialize()
         else:
-            raise FakeRavencoinProxyException(
+            raise FakeEvrmoreProxyException(
                 "Wrong type passed to sendrawtransaction.")
         transaction = CMutableTransaction.deserialize(given_bytes)
         return b2lx(transaction.GetHash())
@@ -323,7 +323,7 @@ class FakeRavencoinProxy(object):
             # assert presence of important details
             for necessary_key in necessary_keys:
                 if not necessary_key in request.keys():
-                    raise FakeRavencoinProxyException(
+                    raise FakeEvrmoreProxyException(
                         "Missing necessary key {} for _batch request number {}".format(necessary_key, idx))
 
             if isinstance(request["params"], list):

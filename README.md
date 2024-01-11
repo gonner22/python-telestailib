@@ -25,7 +25,7 @@ consensus critical and non-consensus-critical.
 
     evrmore.core            - Basic core definitions, datastructures, and
                               (context-independent) validation
-    evrmore.core.assets     - OP_RVN_ASSET data structures
+    evrmore.core.assets     - OP_EVR_ASSET data structures
     evrmore.core.key        - ECC pubkeys
     evrmore.core.script     - Scripts and opcodes
     evrmore.core.scripteval - Script evaluation/verification

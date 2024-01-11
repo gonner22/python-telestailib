@@ -12,7 +12,7 @@
 """Script evaluation
 
 Be warned that there are highly likely to be consensus bugs in this code; it is
-unlikely to match Satoshi Ravencoin exactly. Think carefully before using this
+unlikely to match Satoshi Evrmore exactly. Think carefully before using this
 module.
 """
 
@@ -224,7 +224,7 @@ def _CheckMultiSig(opcode, script, stack, txTo, inIdx, flags, err_raiser, nOpCou
         stack.pop()
         i -= 1
 
-    # Note how Ravencoin Core duplicates the len(stack) check, rather than
+    # Note how Evrmore Core duplicates the len(stack) check, rather than
     # letting pop() handle it; maybe that's wrong?
     if len(stack) and SCRIPT_VERIFY_NULLDUMMY in flags:
         if stack[-1] != b'':

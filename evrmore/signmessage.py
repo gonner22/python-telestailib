@@ -14,7 +14,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from evrmore.core.key import CPubKey
 from evrmore.core.serialize import ImmutableSerializable
-from evrmore.wallet import P2PKHRavencoinAddress
+from evrmore.wallet import P2PKHEvrmoreAddress
 import evrmore
 import base64
 import sys
@@ -33,7 +33,7 @@ def VerifyMessage(address, message, sig):
 
     pubkey = CPubKey.recover_compact(hash, sig)
 
-    return str(P2PKHRavencoinAddress.from_pubkey(pubkey)) == str(address)
+    return str(P2PKHEvrmoreAddress.from_pubkey(pubkey)) == str(address)
 
 
 def SignMessage(key, message):
@@ -46,10 +46,11 @@ def SignMessage(key, message):
     return base64.b64encode(_bchr(meta) + sig)
 
 
-class RavencoinMessage(ImmutableSerializable):
+class EvrmoreMessage(ImmutableSerializable):
     __slots__ = ['magic', 'message']
 
-    def __init__(self, message="", magic="Raven Signed Message:\n"):
+    # messagePrefix: '\x16Raven Signed Message:\n', -> messagePrefix: '\x18Evrmore Signed Message:\n',
+    def __init__(self, message="", magic="Evrmore Signed Message:\n"):
         object.__setattr__(self, 'message', message.encode("utf-8"))
         object.__setattr__(self, 'magic', magic.encode("utf-8"))
 
@@ -70,4 +71,4 @@ class RavencoinMessage(ImmutableSerializable):
         return self.message.decode('ascii')
 
     def __repr__(self):
-        return 'RavencoinMessage(%s, %s)' % (self.magic, self.message)
+        return 'EvrmoreMessage(%s, %s)' % (self.magic, self.message)

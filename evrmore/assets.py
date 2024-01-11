@@ -9,7 +9,7 @@
 # propagated, or distributed except according to the terms contained in the
 # LICENSE file.
 
-"""Ravencoin assets"""
+"""Evrmore assets"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -33,7 +33,7 @@ DOUBLE_PUNCTUATION = re.compile(r"^.*[._]{2,}.*$")
 LEADING_PUNCTUATION = re.compile(r"^[._].*$")
 TRAILING_PUNCTUATION = re.compile(r"^.*[._]$")
 
-RAVEN_NAMES = re.compile("^RVN$|^RAVEN$|^EVRMORE$")
+RAVEN_NAMES = re.compile("^EVR$|^RAVEN$|^EVRMORE$")
 
 
 class InvalidAssetName(Exception):
@@ -102,7 +102,7 @@ class CAsset(object):
         # check for invalid asset name
 
         if RAVEN_NAMES.match(namestr):
-            raise InvalidAssetName("not allowed (RVN/RAVEN/EVRMORE")
+            raise InvalidAssetName("not allowed (EVR/RAVEN/EVRMORE")
         if DOUBLE_PUNCTUATION.match(namestr):
             raise InvalidAssetName("double punctuation")
         if LEADING_PUNCTUATION.match(namestr):
@@ -137,7 +137,7 @@ class CAsset(object):
 
         self._name = namestr
 
-        # unique tag '#' is not counted when checking length, as raven source
+        # unique tag '#' is not counted when checking length, as evrmore source
         if len(self.full_name.replace('#', '')) > max_length:
             raise InvalidAssetName("Asset string {} is too long (max {} characters)".format(
                 self.full_name, max_length))
@@ -273,7 +273,7 @@ class CAssetName(object):
 
 
 # Asset metadata representation
-# https://github.com/RavenProject/Ravencoin/blob/master/assets/asset_metadata_spec.md
+# https://github.com/RavenProject/Evrmore/blob/master/assets/asset_metadata_spec.md
 
 class Asset_Metadata(object):
     def __init__(self, contract_url="", contract_hash="", contract_signature="",
@@ -352,7 +352,7 @@ class Asset_Metadata(object):
                     "contract_hash must be a sha256 hash in ascii hex")
 
 
-"""Ravencoin messaging"""
+"""Evrmore messaging"""
 
 MAX_CHANNEL_NAME_LENGTH = 12
 

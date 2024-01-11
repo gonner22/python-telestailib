@@ -11,7 +11,7 @@
 # propagated, or distributed except according to the terms contained in the
 # LICENSE file.
 
-"""Ravencoin Core RPC support
+"""Evrmore Core RPC support
 
 By default this uses the standard library ``json`` module. By monkey patching,
 a different implementation can be used instead, at your own risk:
@@ -47,7 +47,7 @@ except ImportError:
 import evrmore
 from evrmore.core import COIN, x, lx, b2lx, CBlock, CBlockHeader, CTransaction, COutPoint, CTxOut
 from evrmore.core.script import CScript
-from evrmore.wallet import CRavencoinAddress, CRavencoinSecret
+from evrmore.wallet import CEvrmoreAddress, CEvrmoreSecret
 
 DEFAULT_USER_AGENT = "AuthServiceProxy/0.1"
 
@@ -69,13 +69,13 @@ def get_evr_datadir(datadir=None):
         elif platform.system() == 'Windows':
             datadir = os.path.join(os.environ['APPDATA'], 'Raven')
         else:
-            datadir = os.path.expanduser('~/.raven')
+            datadir = os.path.expanduser('~/.evrmore')
 
     return datadir
 
 
 def get_evr_conf(datadir=None):
-    return os.path.join(get_evr_datadir(datadir), 'raven.conf')
+    return os.path.join(get_evr_datadir(datadir), 'evrmore.conf')
 
 
 def check_numeric(num):
@@ -164,7 +164,7 @@ class BaseProxy(object):
         authpair = None
 
         if service_url is None:
-            # Figure out the path to the raven.conf file
+            # Figure out the path to the evrmore.conf file
             if btc_conf_file is None:
                 if platform.system() == 'Darwin':
                     btc_conf_file = os.path.expanduser(
@@ -173,13 +173,13 @@ class BaseProxy(object):
                     btc_conf_file = os.path.join(
                         os.environ['APPDATA'], 'Raven')
                 else:
-                    btc_conf_file = os.path.expanduser('~/.raven')
-                btc_conf_file = os.path.join(btc_conf_file, 'raven.conf')
+                    btc_conf_file = os.path.expanduser('~/.evrmore')
+                btc_conf_file = os.path.join(btc_conf_file, 'evrmore.conf')
 
-            # Ravencoin Core accepts empty rpcuser, not specified in btc_conf_file
+            # Evrmore Core accepts empty rpcuser, not specified in btc_conf_file
             conf = {'rpcuser': ""}
 
-            # Extract contents of raven.conf to build service_url
+            # Extract contents of evrmore.conf to build service_url
             try:
                 with open(btc_conf_file, 'r') as fd:
                     for line in fd.readlines():
@@ -190,7 +190,7 @@ class BaseProxy(object):
                         k, v = line.split('=', 1)
                         conf[k.strip()] = v.strip()
 
-            # Treat a missing raven.conf as though it were empty
+            # Treat a missing evrmore.conf as though it were empty
             except FileNotFoundError:
                 pass
 
@@ -362,7 +362,7 @@ class Proxy(BaseProxy):
     Unlike ``RawProxy``, data is passed as ``evrmore.core`` objects or packed
     bytes, rather than JSON or hex strings. Not all methods are implemented
     yet; you can use ``call`` to access missing ones in a forward-compatible
-    way. Assumes Ravencoin Core version >= v0.16.0; older versions mostly work,
+    way. Assumes Evrmore Core version >= v0.16.0; older versions mostly work,
     but there are a few incompatibilities.
     """
 
@@ -376,7 +376,7 @@ class Proxy(BaseProxy):
 
         If ``service_url`` is not specified, the username and password are read
         out of the file ``btc_conf_file``. If ``btc_conf_file`` is not
-        specified, ``~/.evrmore/raven.conf`` or equivalent is used by
+        specified, ``~/.evrmore/evrmore.conf`` or equivalent is used by
         default.  The default port is set according to the chain parameters in
         use: mainnet, testnet, or regtest.
 
@@ -401,7 +401,7 @@ class Proxy(BaseProxy):
         """
         r = self._call('dumpprivkey', str(addr))
 
-        return CRavencoinSecret(r)
+        return CEvrmoreSecret(r)
 
     def fundrawtransaction(self, tx, include_watching=False):
         """Add inputs to a transaction until it has enough in value to meet its out value.
@@ -444,7 +444,7 @@ class Proxy(BaseProxy):
         "generate(self,numblocks)" method.
 
         numblocks - How many blocks are generated immediately.
-        addr     - Address to receive block reward (CRavencoinAddress instance)
+        addr     - Address to receive block reward (CEvrmoreAddress instance)
 
         Returns iterable of block hashes generated.
         """
@@ -452,10 +452,10 @@ class Proxy(BaseProxy):
         return (lx(blk_hash) for blk_hash in r)
 
     def getaccountaddress(self, account=None):
-        """Return the current Ravencoin address for receiving payments to this
+        """Return the current Evrmore address for receiving payments to this
         account."""
         r = self._call('getaccountaddress', account)
-        return CRavencoinAddress(r)
+        return CEvrmoreAddress(r)
 
     def getbalance(self, account='*', minconf=1, include_watchonly=False):
         """Get the balance
@@ -557,7 +557,7 @@ class Proxy(BaseProxy):
         return self._call('getmininginfo')
 
     def getnewaddress(self, account=None):
-        """Return a new Ravencoin address for receiving payments.
+        """Return a new Evrmore address for receiving payments.
 
         If account is not None, it is added to the address book so payments
         received with the address will be credited to account.
@@ -568,15 +568,15 @@ class Proxy(BaseProxy):
         else:
             r = self._call('getnewaddress')
 
-        return CRavencoinAddress(r)
+        return CEvrmoreAddress(r)
 
     def getrawchangeaddress(self):
-        """Returns a new Ravencoin address, for receiving change.
+        """Returns a new Evrmore address, for receiving change.
 
         This is for use with raw transactions, NOT normal use.
         """
         r = self._call('getrawchangeaddress')
-        return CRavencoinAddress(r)
+        return CEvrmoreAddress(r)
 
     def getrawmempool(self, verbose=False):
         """Return the mempool"""
@@ -628,7 +628,7 @@ class Proxy(BaseProxy):
         Works only for addresses in the local wallet; other addresses will
         always show zero.
 
-        addr    - The address. (CRavencoinAddress instance)
+        addr    - The address. (CEvrmoreAddress instance)
 
         minconf - Only include transactions confirmed at least this many times.
         (default=1)
@@ -699,11 +699,11 @@ class Proxy(BaseProxy):
             del unspent['txid']
             del unspent['vout']
 
-            # address isn't always available as Ravencoin Core allows scripts w/o
+            # address isn't always available as Evrmore Core allows scripts w/o
             # an address type to be imported into the wallet, e.g. non-p2sh
             # segwit
             try:
-                unspent['address'] = CRavencoinAddress(unspent['address'])
+                unspent['address'] = CEvrmoreAddress(unspent['address'])
             except KeyError:
                 pass
             unspent['scriptPubKey'] = CScript(
@@ -791,7 +791,7 @@ class Proxy(BaseProxy):
         """Return information about an address"""
         r = self._call('validateaddress', str(address))
         if r['isvalid']:
-            r['address'] = CRavencoinAddress(r['address'])
+            r['address'] = CEvrmoreAddress(r['address'])
         if 'pubkey' in r:
             r['pubkey'] = unhexlify(r['pubkey'])
         return r

@@ -16,13 +16,13 @@ import argparse
 import re
 from evrmore.blockchain import Blockchain
 from evrmore.core import b2x, b2lx, COIN
-from evrmore.wallet import CRavencoinAddress, CRavencoinAddressError
+from evrmore.wallet import CEvrmoreAddress, CEvrmoreAddressError
 from evrmore.core.script import OP_RETURN
 
 parser = argparse.ArgumentParser(
-    description='Scans Ravencoin block database files (blk*.dat) for text in OP_RETURNs')
-parser.add_argument('-D', '--dir', default="~/.raven/blocks/",
-                    type=str, help="Directory containing Ravencoin block database")
+    description='Scans Evrmore block database files (blk*.dat) for text in OP_RETURNs')
+parser.add_argument('-D', '--dir', default="~/.evrmore/blocks/",
+                    type=str, help="Directory containing Evrmore block database")
 parser.add_argument('-S', '--startblock', default=0, type=int,
                     help="Scan starting block (default: 0)")
 parser.add_argument('-E', '--endblock', default=0, type=int,

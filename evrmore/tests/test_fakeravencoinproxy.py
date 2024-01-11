@@ -32,22 +32,22 @@ from evrmore.core import (
 
 from evrmore.wallet import (
     # has a nifty function from_pubkey
-    P2PKHRavencoinAddress,
+    P2PKHEvrmoreAddress,
 )
 
 from evrmore.tests.fakeevrmoreproxy import (
-    FakeRavencoinProxy,
+    FakeEvrmoreProxy,
     make_txout,
     make_blocks_from_blockhashes,
     make_rpc_batch_request_entry,
 
-    # TODO: import and test with FakeRavencoinProxyException
+    # TODO: import and test with FakeEvrmoreProxyException
 )
 
 
-class FakeRavencoinProxyTestCase(unittest.TestCase):
+class FakeEvrmoreProxyTestCase(unittest.TestCase):
     def test_constructor(self):
-        FakeRavencoinProxy()
+        FakeEvrmoreProxy()
 
     def test_constructor_accepts_blocks(self):
         blockhash0 = "blockhash0"
@@ -58,7 +58,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             {"hash": blockhash1},
         ]
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
 
         self.assertNotEqual(proxy.blocks, {})
         self.assertTrue(proxy.blocks is blocks)
@@ -72,7 +72,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             {"hash": blockhash1},
         ]
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
         result = proxy.getblock(blockhash0)
 
         self.assertEqual(type(result), dict)
@@ -88,7 +88,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         for blockhash in blockhashes:
             blocks.append({"hash": blockhash})
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
 
         for (expected_height, blockhash) in enumerate(blockhashes):
             blockdata = proxy.getblock(blockhash)
@@ -101,7 +101,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             {"hash": blockhash0},
         ]
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
         result = proxy.getblock(lx(blockhash0))
 
         self.assertEqual(type(result), dict)
@@ -115,7 +115,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             {"hash": blockhash0, "tx": transaction_txids},
         ]
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
         result = proxy.getblock(blockhash0)
 
         self.assertTrue("tx" in result.keys())
@@ -129,7 +129,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             {"hash": blockhash0},
         ]
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
 
         blockhash_result = proxy.getblockhash(0)
 
@@ -144,7 +144,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         ]
 
         blocks = make_blocks_from_blockhashes(blockhashes)
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
 
         for (height, expected_blockhash) in enumerate(blockhashes):
             blockhash_result = proxy.getblockhash(height)
@@ -152,7 +152,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
 
     def test_getblockcount_zero(self):
         blocks = []
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
         count = proxy.getblockcount()
         self.assertEqual(count, len(blocks) - 1)
 
@@ -165,7 +165,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             {"hash": blockhash1, "previousblockhash": blockhash0},
         ]
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
         count = proxy.getblockcount()
         self.assertEqual(count, len(blocks) - 1)
 
@@ -185,7 +185,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         # just making sure...
         self.assertTrue(transactions[txids[0]] is not transactions[txids[1]])
 
-        proxy = FakeRavencoinProxy(transactions=transactions)
+        proxy = FakeEvrmoreProxy(transactions=transactions)
 
         for txid in txids:
             txdata = proxy.getrawtransaction(txid)
@@ -201,7 +201,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         num_addresses = random.randint(10, 100)
         addresses = set()
 
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
 
         for each in range(num_addresses):
             address = proxy.getnewaddress()
@@ -210,16 +210,16 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         self.assertEqual(len(addresses), num_addresses)
 
     def test_getnewaddress_returns_cevrmoreaddress(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         address = proxy.getnewaddress()
-        self.assertEqual(type(address), P2PKHRavencoinAddress)
+        self.assertEqual(type(address), P2PKHEvrmoreAddress)
 
     def test_importaddress(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         proxy.importaddress("foo")
 
     def test_importaddress_with_parameters(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         address = "some_address"
         label = ""
         rescan = False
@@ -228,7 +228,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
     def test_fundrawtransaction(self):
         unfunded_transaction = CMutableTransaction(
             [], [make_txout() for x in range(0, 5)])
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
 
         funded_transaction_hex = proxy.fundrawtransaction(unfunded_transaction)[
             "hex"]
@@ -245,7 +245,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
     def test_fundrawtransaction_hex_hash(self):
         unfunded_transaction = CMutableTransaction(
             [], [make_txout() for x in range(0, 5)])
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
 
         funded_transaction_hex = proxy.fundrawtransaction(
             b2x(unfunded_transaction.serialize()))["hex"]
@@ -263,7 +263,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         num_outputs = 5
         unfunded_transaction = CMutableTransaction(
             [], [make_txout() for x in range(0, num_outputs)])
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
 
         funded_transaction_hex = proxy.fundrawtransaction(
             b2x(unfunded_transaction.serialize()))["hex"]
@@ -277,7 +277,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
         num_outputs = 5
         given_transaction = CMutableTransaction(
             [], [make_txout() for x in range(0, num_outputs)])
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
 
         result = proxy.signrawtransaction(given_transaction)
 
@@ -302,32 +302,32 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             [], [make_txout() for x in range(0, num_outputs)])
         expected_txid = b2lx(given_transaction.GetHash())
         given_transaction_hex = b2x(given_transaction.serialize())
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         resulting_txid = proxy.sendrawtransaction(given_transaction_hex)
         self.assertEqual(resulting_txid, expected_txid)
 
     def test__batch_empty_list_input(self):
         requests = []
         self.assertEqual(len(requests), 0)  # must be empty for test
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         results = proxy._batch(requests)
         self.assertEqual(type(results), list)
         self.assertEqual(len(results), 0)
 
     def test__batch_raises_when_no_params(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         with self.assertRaises(TypeError):
             proxy._batch()
 
     def test__batch_same_count_results_as_requests(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         request = make_rpc_batch_request_entry("getblockcount", [])
         requests = [request]
         results = proxy._batch(requests)
         self.assertEqual(len(requests), len(results))
 
     def test__batch_gives_reasonable_getblockcount_result(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         request = make_rpc_batch_request_entry("getblockcount", [])
         requests = [request]
         results = proxy._batch(requests)
@@ -335,7 +335,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
 
     def test__batch_result_keys(self):
         expected_keys = ["error", "id", "result"]
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         request = make_rpc_batch_request_entry("getblockcount", [])
         requests = [request]
         results = proxy._batch(requests)
@@ -344,7 +344,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
                         for expected_key in expected_keys]))
 
     def test__batch_result_error_is_none(self):
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         request = make_rpc_batch_request_entry("getblockcount", [])
         requests = [request]
         results = proxy._batch(requests)
@@ -353,7 +353,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
 
     def test__batch_returns_error_when_given_invalid_params(self):
         params = 1
-        proxy = FakeRavencoinProxy()
+        proxy = FakeEvrmoreProxy()
         request = make_rpc_batch_request_entry("getblockcount", params)
         requests = [request]
         results = proxy._batch(requests)
@@ -386,7 +386,7 @@ class FakeRavencoinProxyTestCase(unittest.TestCase):
             blocks.append(block_data)
             previous_blockhash = blockhash
 
-        proxy = FakeRavencoinProxy(blocks=blocks)
+        proxy = FakeEvrmoreProxy(blocks=blocks)
         count = proxy.getblockcount()
         self.assertEqual(count, len(blocks) - 1)
 

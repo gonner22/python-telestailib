@@ -17,7 +17,7 @@ from evrmore.core.assets import RvnAssetData
 evrmore.SelectParams("mainnet")
 
 
-class Test_RVN_ASSET(unittest.TestCase):
+class Test_EVR_ASSET(unittest.TestCase):
     def test_valid(self):
         # standard transfer
         asset_data = RvnAssetData(

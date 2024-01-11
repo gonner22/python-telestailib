@@ -13,8 +13,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import unittest
 
-from evrmore.wallet import CRavencoinSecret
-from evrmore.signmessage import RavencoinMessage, VerifyMessage, SignMessage
+from evrmore.wallet import CEvrmoreSecret
+from evrmore.signmessage import EvrmoreMessage, VerifyMessage, SignMessage
 import sys
 import os
 import json
@@ -38,23 +38,23 @@ class Test_SignVerifyMessage(unittest.TestCase):
         message = address
         signature = "IKUeo59jk2ueeSBDkugZ9PBbteNayMn2FOKAQ1/WvoNzKcd0DeB1ljzTASm2VV8BeP//jF0aU7ztE55LIVVyOr8="
 
-        message = RavencoinMessage(message)
+        message = EvrmoreMessage(message)
 
         self.assertTrue(VerifyMessage(address, message, signature))
 
     def test_verify_message_vectors(self):
         for vector in load_test_vectors('signmessage.json'):
-            message = RavencoinMessage(vector['address'])
+            message = EvrmoreMessage(vector['address'])
             self.assertTrue(VerifyMessage(
                 vector['address'], message, vector['signature']))
 
     def test_sign_message_simple(self):
-        key = CRavencoinSecret(
+        key = CEvrmoreSecret(
             "L1gVQSmAJDnkK1A1V3mJehL9xQbdai9CCx65d29seRFGVVheyngq")
         address = "RL5dKQv7ZZYrqSYXNVgy2HvncjcQf8G6at"
         message = address
 
-        message = RavencoinMessage(message)
+        message = EvrmoreMessage(message)
         signature = SignMessage(key, message)
 
         self.assertTrue(signature)
@@ -62,8 +62,8 @@ class Test_SignVerifyMessage(unittest.TestCase):
 
     def test_sign_message_vectors(self):
         for vector in load_test_vectors('signmessage.json'):
-            key = CRavencoinSecret(vector['wif'])
-            message = RavencoinMessage(vector['address'])
+            key = CEvrmoreSecret(vector['wif'])
+            message = EvrmoreMessage(vector['address'])
 
             signature = SignMessage(key, message)
 
