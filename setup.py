@@ -13,7 +13,7 @@ requires = ['x16r_hash', 'x16rv2_hash', 'kawpow']
 
 setup(name='python-evrmorelib',
       version=__version__,
-      description='Evrmore fork of python-bitcoinlib',
+      description='Evrmore fork of python-ravencoinlib, a fork of python-bitcoinlib',
       long_description=README,
       long_description_content_type='text/markdown',
       classifiers=[
@@ -25,7 +25,7 @@ setup(name='python-evrmorelib',
       packages=find_packages(),
       zip_safe=False,
       author='standard-error@github',
-      author_email='evrmorelib@gmail.com',
+      author_email='satorinetio@gmail.com',
       install_requires=requires,
       test_suite="evrmore.tests"
       )
