@@ -50,7 +50,7 @@ class EvrmoreMessage(ImmutableSerializable):
     __slots__ = ['magic', 'message']
 
     # messagePrefix: '\x16Raven Signed Message:\n', -> messagePrefix: '\x18Evrmore Signed Message:\n',
-    def __init__(self, message="", magic="\x18Evrmore Signed Message:\n"):
+    def __init__(self, message="", magic="Evrmore Signed Message:\n"):
         object.__setattr__(self, 'message', message.encode("utf-8"))
         object.__setattr__(self, 'magic', magic.encode("utf-8"))
 
