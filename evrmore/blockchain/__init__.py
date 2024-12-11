@@ -101,7 +101,7 @@ class Blockchain(object):
         if self.indexPath != index:
             db = plyvel.DB(index, compression=None)
             self.blockIndexes = [DBBlockIndex(format_hash(k[1:]), v)
-                                 for k, v in db.iterator() if k[0] == ord('b')]
+                                    for k, v in db.iterator() if k[0] == ord('b')]
             db.close()
             self.blockIndexes.sort(key=lambda x: x.height)
             self.indexPath = index

@@ -499,9 +499,9 @@ OPCODES_BY_NAME = {
 # Invalid even when occuring in an unexecuted OP_IF branch due to either being
 # disabled, or never having been implemented.
 DISABLED_OPCODES = frozenset((OP_VERIF, OP_VERNOTIF,
-                              OP_CAT, OP_SUBSTR, OP_LEFT, OP_RIGHT, OP_INVERT, OP_AND,
-                              OP_OR, OP_XOR, OP_2MUL, OP_2DIV, OP_MUL, OP_DIV, OP_MOD,
-                              OP_LSHIFT, OP_RSHIFT))
+                                OP_CAT, OP_SUBSTR, OP_LEFT, OP_RIGHT, OP_INVERT, OP_AND,
+                                OP_OR, OP_XOR, OP_2MUL, OP_2DIV, OP_MUL, OP_DIV, OP_MOD,
+                                OP_LSHIFT, OP_RSHIFT))
 
 
 class CScriptInvalidError(Exception):
@@ -1061,6 +1061,22 @@ def SignatureHash(script, txTo, inIdx, hashtype, amount=None, sigversion=SIGVERS
         raise ValueError(err)
     return h
 
+def CreateMultisigRedeemScript(required, pubkeys):
+    """
+    Create a redeem script for a m-of-n multisig transaction.
+    
+    :param required: Number of required signatures (m in m-of-n)
+    :param pubkeys: List of public keys (n in m-of-n)
+    :return: CScript object representing the redeem script
+    """
+    if not (0 <= required <= len(pubkeys) <= 16):
+        raise ValueError("Invalid number of required signatures or public keys")
+    
+    script = CScript([required])  # m
+    for pubkey in pubkeys:
+        script += CScript([pubkey])  # Add each public key
+    script += CScript([len(pubkeys), OP_CHECKMULTISIG])  # n OP_CHECKMULTISIG
+    return script
 
 __all__ = (
     'MAX_SCRIPT_SIZE',
@@ -1203,6 +1219,7 @@ __all__ = (
     'FindAndDelete',
     'RawSignatureHash',
     'SignatureHash',
+    'CreateMultisigRedeemScript',
     'IsLowDERSignature',
 
     'SIGVERSION_BASE',

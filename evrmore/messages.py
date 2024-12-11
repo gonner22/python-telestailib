@@ -129,7 +129,7 @@ class msg_version(MsgSerializable):
         self.addrFrom = CAddress(PROTO_VERSION)
         self.nNonce = random.getrandbits(64)
         self.strSubVer = (b'/python-evrmorelib:' +
-                          evrmore.__version__.encode('ascii') + b'/')
+                            evrmore.__version__.encode('ascii') + b'/')
         self.nStartingHeight = -1
         self.fRelay = True
 

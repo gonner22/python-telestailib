@@ -26,6 +26,8 @@ import evrmore
 import array
 import sys
 
+from evrmore.core.serialize import Hash160
+
 _bord = ord
 def _tobytes(x): return array.array('B', x).tostring()
 
@@ -207,7 +209,7 @@ class P2PKHEvrmoreAddress(CBase58EvrmoreAddress):
 
         elif nVersion != evrmore.params.BASE58_PREFIXES['PUBKEY_ADDR']:
             raise ValueError('nVersion incorrect for P2PKH address: got %d; expected %d' %
-                             (nVersion, evrmore.params.BASE58_PREFIXES['PUBKEY_ADDR']))
+                                (nVersion, evrmore.params.BASE58_PREFIXES['PUBKEY_ADDR']))
 
         return super(P2PKHEvrmoreAddress, cls).from_bytes(data, nVersion)
 
@@ -397,7 +399,6 @@ class CEvrmoreSecret(evrmore.base58.CBase58Data, CKey):
 
         CKey.__init__(self, self[0:32], len(self) >
                       32 and _bord(self[32]) == 1)
-
 
 __all__ = (
     'CEvrmoreAddressError',
