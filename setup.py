@@ -9,14 +9,14 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.md')) as f:
     README = f.read()
 
-#requires = ['x16r_hash', 'x16rv2_hash', 'kawpow']
+requires = ['x16r_hash', 'x16rv2_hash', 'kawpow', 'plyvel==1.5.1']
 # Read requirements from requirements.txt, filtering out comments and empty lines
-with open(os.path.join(here, 'requirements.txt')) as f:
-    requires = [
-        line.strip()
-        for line in f.read().splitlines()
-        if line.strip() and not line.strip().startswith("#")
-    ]
+#with open(os.path.join(here, 'requirements.txt')) as f:
+#    requires = [
+#        line.strip()
+#        for line in f.read().splitlines()
+#        if line.strip() and not line.strip().startswith("#")
+#    ]
 
 setup(name='python-evrmorelib',
         version=__version__,
