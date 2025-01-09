@@ -27,6 +27,7 @@ import array
 import sys
 
 from evrmore.core.serialize import Hash160
+from evrmore.blockchain.utils import double_sha256
 
 _bord = ord
 def _tobytes(x): return array.array('B', x).tostring()
@@ -399,6 +400,25 @@ class CEvrmoreSecret(evrmore.base58.CBase58Data, CKey):
 
         CKey.__init__(self, self[0:32], len(self) >
                       32 and _bord(self[32]) == 1)
+        
+    def to_wif(self) -> str:
+        """Convert this secret key to a WIF (Wallet Import Format) string."""
+        payload = self[:]  # Get the internal byte representation of the secret key
+        if self.is_compressed:
+            payload += b'\x01'  # Add compression flag if the key is compressed
+
+        version_byte = evrmore.params.BASE58_PREFIXES['SECRET_KEY']
+        payload = bytes([version_byte]) + payload
+
+        # Calculate checksum (double SHA256) and append first 4 bytes as checksum
+        checksum = double_sha256(payload)[:4]
+
+        # Concatenate payload and checksum
+        final_payload = payload + checksum
+
+        # Base58Check encode the payload
+        wif = evrmore.base58.encode(final_payload)
+        return wif
 
 __all__ = (
     'CEvrmoreAddressError',

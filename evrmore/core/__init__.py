@@ -485,7 +485,7 @@ class CTransaction(ImmutableSerializable):
 
     def __repr__(self):
         return "CTransaction(%r, %r, %i, %i, %r)" % (self.vin, self.vout,
-                                                     self.nLockTime, self.nVersion, self.wit)
+                                                        self.nLockTime, self.nVersion, self.wit)
 
     @classmethod
     def from_tx(cls, tx):
@@ -506,7 +506,7 @@ class CTransaction(ImmutableSerializable):
             includes it. """
         if self.wit != CTxWitness():
             txid = Hash(CTransaction(self.vin, self.vout, self.nLockTime,
-                                     self.nVersion).serialize())
+                                        self.nVersion).serialize())
         else:
             txid = Hash(self.serialize())
         return txid

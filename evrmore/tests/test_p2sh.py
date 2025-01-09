@@ -5,7 +5,7 @@ import hashlib
 
 from evrmore.core.script import OP_CHECKMULTISIG, CScript, CreateMultisigRedeemScript
 from evrmore.crypto import verify_multisig_script, verify_signature
-from evrmore.wallet import P2PKHEvrmoreAddress, P2SHEvrmoreAddress
+from evrmore.wallet import P2PKHEvrmoreAddress, P2SHEvrmoreAddress, CEvrmoreSecret
 from evrmore.core.transaction import CMultiSigTransaction
 
 class TestP2SHFunctions(unittest.TestCase):
@@ -50,6 +50,7 @@ class TestP2SHFunctions(unittest.TestCase):
         print(f"Public key: {pubkey.hex()}")
         private_key_bytes = bytes.fromhex(privkey.get_privkey().hex())
         print("private key bytes: ", private_key_bytes)
+        print("private key wif: ", CEvrmoreSecret.from_secret_bytes(private_key_bytes).to_wif())
         # print(f"Signature length: {len(sig)}")
         public_key_bytes = bytes.fromhex(pubkey.hex())
         print("public key bytes: ", public_key_bytes)
@@ -94,9 +95,12 @@ class TestP2SHFunctions(unittest.TestCase):
         try:
             # Create a redeem script
             redeem_script = CreateMultisigRedeemScript(2, self.public_keys)
-            # print("Redeem Script Created", redeem_script)
-
-            # Generate P2SH address
+            print("Redeem Script Created", redeem_script.hex())
+            for pubkey in self.public_keys:
+                public_key_bytes = bytes.fromhex(pubkey.hex())
+                p2pkh_address = P2PKHEvrmoreAddress.from_pubkey(public_key_bytes)
+                print("p2pkh address: ", pubkey.hex())
+                # Generate P2SH address
             p2sh_address = P2SHEvrmoreAddress.from_redeemScript(redeem_script)
             print("P2SH Address Generated", p2sh_address)
 
