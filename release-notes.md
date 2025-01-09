@@ -1,5 +1,9 @@
 # python-evrmorelib release notes
 
+## v0.2.9 - Jan 2025
+
+* made requirements file single source of truth
+
 ## v0.2.8 - Jan 2025
 
 * included needed dependancy in requirements
