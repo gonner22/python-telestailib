@@ -1,5 +1,9 @@
 # python-evrmorelib release notes
 
+## v0.2.8 - Jan 2025
+
+* included needed dependancy in requirements
+
 ## v0.2.7 - Jan 2025
 
 * multisig (p2sh) capabilities, better vanity script
