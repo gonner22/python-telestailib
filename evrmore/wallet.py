@@ -16,6 +16,7 @@ scriptPubKeys; currently there is no actual wallet support implemented.
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+import hashlib
 import evrmore.core.script as script
 import evrmore.core.key
 import evrmore.core
@@ -200,6 +201,12 @@ class P2SHEvrmoreAddress(CBase58EvrmoreAddress):
 
     def to_redeemScript(self):
         return self.to_scriptPubKey()
+    
+    def to_scripthash(self):
+        """Convert address to a scripthash for ElectrumX compatibility"""
+        script_pubkey = self.to_scriptPubKey()
+        scripthash = hashlib.sha256(script_pubkey).digest()
+        return scripthash[::-1].hex()
 
 
 class P2PKHEvrmoreAddress(CBase58EvrmoreAddress):
