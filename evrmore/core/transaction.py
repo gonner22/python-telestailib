@@ -4,16 +4,19 @@ from evrmore.core.script import OP_0, SIGHASH_ALL, SIGVERSION_BASE, CScript, Sig
 class CMultiSigTransaction(CMutableTransaction):
     """Transaction type for multisig operations with secure handling."""
     
-    def generate_sighash(self, redeem_script, sigversion=SIGVERSION_BASE):
+    def generate_sighash(self, redeem_script, input_index, sigversion=SIGVERSION_BASE):
         """
         Generate the sighash for a multisig transaction.
 
         :param redeem_script: CScript redeem script
+        :param input_index: Index of the input being signed
         :param sigversion: Signature version
         :return: sighash (bytes)
         """
         try:
-            sighash = SignatureHash(redeem_script, self, 0, SIGHASH_ALL, sigversion)
+            if not isinstance(input_index, int):
+                raise TypeError("input_index must be an integer")
+            sighash = SignatureHash(redeem_script, self, input_index, SIGHASH_ALL, sigversion)
             return sighash
         except Exception as e:
             raise ValueError(f"Error generating sighash: {e}")
@@ -33,7 +36,7 @@ class CMultiSigTransaction(CMutableTransaction):
         except Exception as e:
             raise ValueError(f"Error signing transaction: {e}")
 
-    def apply_multisig_signatures(self, signatures, redeem_script):
+    def apply_multisig_signatures(self, signatures_list, redeem_script):
         """
         Apply multiple collected signatures to a multisig transaction for P2SH.
 
@@ -41,12 +44,12 @@ class CMultiSigTransaction(CMutableTransaction):
         :param redeem_script: CScript redeem script
         """
         try:
-            if not signatures or not redeem_script:
+            if not signatures_list or not redeem_script:
                 raise ValueError("Signatures and redeem script cannot be empty.")
 
-            # Ensure the signatures are correctly formatted and apply to the scriptSig
-            scriptSig = CScript([OP_0] + signatures + [redeem_script])
-            self.vin[0].scriptSig = scriptSig
+            for i,txin in enumerate(self.vin):
+                scriptSig = CScript([OP_0] + signatures_list[i] + [redeem_script])
+                txin.scriptSig = scriptSig
 
             return self
 
