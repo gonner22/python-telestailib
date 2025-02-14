@@ -7,7 +7,7 @@ local*.cfg
 .tox/
 build/
 htmlcov/
-python_evrmorelib.egg-info/
+python_telestailib.egg-info/
 dist/
 
 venv/

@@ -18,8 +18,8 @@ if sys.version_info.major < 3:
     sys.stderr.write('Sorry, Python 3.x required by this example.\n')
     sys.exit(1)
 
-import evrmore
-import evrmore.rpc
+import telestai
+import telestai.rpc
 
 import struct
 import sys
@@ -32,14 +32,14 @@ try:
     n = int(sys.argv[1])
 
     if len(sys.argv) == 3:
-        evrmore.SelectParams(sys.argv[2])
+        telestai.SelectParams(sys.argv[2])
 except Exception as ex:
     print('Usage: %s <block-height> [network=(mainnet|testnet|regtest)] > bootstrap.dat' %
           sys.argv[0], file=sys.stderr)
     sys.exit(1)
 
 
-proxy = evrmore.rpc.Proxy()
+proxy = telestai.rpc.Proxy()
 
 total_bytes = 0
 start_time = time.time()
@@ -56,6 +56,6 @@ for i in range(n + 1):
            i, len(block_bytes)),
           file=sys.stderr)
 
-    fd.write(evrmore.params.MESSAGE_START)
+    fd.write(telestai.params.MESSAGE_START)
     fd.write(struct.pack('<i', len(block_bytes)))
     fd.write(block_bytes)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# evrmore documentation build configuration file, created by
+# telestai documentation build configuration file, created by
 # sphinx-quickstart on Thu May 28 20:40:55 2015.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -15,9 +15,9 @@ from version import __version__
 import os
 import sys
 import sphinx
-PROJECT = 'python-evrmoreb'
-DESCRIPTION = 'The Swiss Army Knife of the Evrmore protocol.'
-AUTHORS = 'The python-evrmoreb developers'
+PROJECT = 'python-telestaib'
+DESCRIPTION = 'The Swiss Army Knife of the Telestai protocol.'
+AUTHORS = 'The python-telestaib developers'
 
 
 # If extensions (or modules to document with autodoc) are in another directory,

@@ -1,11 +1,11 @@
-# python-evrmorelib
+# python-telestailib
 
-Evrmore fork of python-bitcoinlib intended to provide access to Evrmore data 
+Telestai fork of python-bitcoinlib intended to provide access to Telestai data 
 structures and protocol. WIP - Test before use
 
-The RPC interface, evrmore.rpc, is designed to work with Evrmore Core v3.3.0+.
+The RPC interface, telestai.rpc, is designed to work with Telestai Core v3.3.0+.
 
-"The only Python library for Evrmore I've ever used" - Warren Buffett
+"The only Python library for Telestai I've ever used" - Warren Buffett
 
 ## Requirements
 
@@ -15,33 +15,33 @@ The RPC interface, evrmore.rpc, is designed to work with Evrmore Core v3.3.0+.
 
     Python modules:
         x16r-hash, x16rv2-hash and kawpow
-        plyvel (requires libleveldb - for parsing Raven core .dat files)
+        plyvel (requires libleveldb - for parsing Telestai core .dat files)
 
 ## Structure
 
-Everything consensus critical is found in the modules under evrmore.core. This
+Everything consensus critical is found in the modules under telestai.core. This
 rule is followed pretty strictly, for instance chain parameters are split into
 consensus critical and non-consensus-critical.
 
-    evrmore.core            - Basic core definitions, datastructures, and
+    telestai.core            - Basic core definitions, datastructures, and
                               (context-independent) validation
-    evrmore.core.assets     - OP_EVR_ASSET data structures
-    evrmore.core.key        - ECC pubkeys
-    evrmore.core.script     - Scripts and opcodes
-    evrmore.core.scripteval - Script evaluation/verification
-    evrmore.core.serialize  - Serialization
+    telestai.core.assets     - OP_TLS_ASSET data structures
+    telestai.core.key        - ECC pubkeys
+    telestai.core.script     - Scripts and opcodes
+    telestai.core.scripteval - Script evaluation/verification
+    telestai.core.serialize  - Serialization
 
-In the future the evrmore.core may use the Satoshi sourcecode directly as a
+In the future the telestai.core may use the Satoshi sourcecode directly as a
 library. Non-consensus critical modules include the following:
 
-    evrmore          - Chain selection
-    evrmore.assets   - Asset name and metadata related code
-    evrmore.base58   - Base58 encoding
-    evrmore.bloom    - Bloom filters (incomplete)
-    evrmore.net      - Network communication (in flux)
-    evrmore.messages - Network messages (in flux)
-    evrmore.rpc      - Evrmore Core RPC interface support
-    evrmore.wallet   - Wallet-related code, currently Evrmore address and
+    telestai          - Chain selection
+    telestai.assets   - Asset name and metadata related code
+    telestai.base58   - Base58 encoding
+    telestai.bloom    - Bloom filters (incomplete)
+    telestai.net      - Network communication (in flux)
+    telestai.messages - Network messages (in flux)
+    telestai.rpc      - Telestai Core RPC interface support
+    telestai.wallet   - Wallet-related code, currently Telestai address and
                        private key support
 
 Effort has been made to follow the Satoshi source relatively closely, for
@@ -52,17 +52,17 @@ CBlockHeader, nValue etc. Otherwise Python naming conventions are followed.
 
 ## Mutable vs. Immutable objects
 
-Like the Evrmore Core codebase CTransaction is immutable and
-CMutableTransaction is mutable; unlike the Evrmore Core codebase this
+Like the Telestai Core codebase CTransaction is immutable and
+CMutableTransaction is mutable; unlike the Telestai Core codebase this
 distinction also applies to COutPoint, CTxIn, CTxOut, and CBlock.
 
 
 ## Endianness Gotchas
 
-Rather confusingly Evrmore Core shows transaction and block hashes as
+Rather confusingly Telestai Core shows transaction and block hashes as
 little-endian hex rather than the big-endian the rest of the world uses for
-SHA256. python-evrmorelib provides the convenience functions x() and lx() in
-evrmore.core to convert from big-endian and little-endian hex to raw bytes to
+SHA256. python-telestailib provides the convenience functions x() and lx() in
+telestai.core to convert from big-endian and little-endian hex to raw bytes to
 accomodate this. In addition see b2x() and b2lx() for conversion from bytes to
 big/little-endian hex.
 
@@ -87,8 +87,8 @@ spending a pay-to-script-hash transaction output:
 
 Do the following:
 
-    import evrmore
-    evrmore.SelectParams(NAME)
+    import telestai
+    telestai.SelectParams(NAME)
 
 Where NAME is one of 'testnet', 'mainnet', or 'regtest'. The chain currently
 selected is a global variable that changes behavior everywhere, just like in
@@ -97,7 +97,7 @@ the Satoshi codebase.
 
 ## Unit tests
 
-Under evrmore/tests using test data from Evrmore Core. To run them:
+Under telestai/tests using test data from Telestai Core. To run them:
 
     python3 -m unittest discover
 

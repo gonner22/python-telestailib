@@ -7,5 +7,5 @@ python:
   - "3.7"
   - "3.8"
 # command to run tests
-script: python3 -m unittest discover -v -s evrmore/tests/
+script: python3 -m unittest discover -v -s telestai/tests/
 
