@@ -3,7 +3,7 @@
 Telestai fork of python-bitcoinlib intended to provide access to Telestai data 
 structures and protocol. WIP - Test before use
 
-The RPC interface, telestai.rpc, is designed to work with Telestai Core v3.3.0+.
+The RPC interface, telestai.rpc, is designed to work with Telestai Core v2.1.7+.
 
 "The only Python library for Telestai I've ever used" - Warren Buffett
 
